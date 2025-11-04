@@ -1,1 +1,16 @@
+com\lloyd27\danmaku\game\Game.class
 com\lloyd27\danmaku\Main.class
+com\lloyd27\danmaku\entity\weapon\AbstractWeapon.class
+com\lloyd27\danmaku\game\Game$1.class
+com\lloyd27\danmaku\entity\Bullet\SimpleBullet.class
+com\lloyd27\danmaku\entity\Bullet\AbstractBullet.class
+com\lloyd27\danmaku\entity\weapon\SimpleWeapon.class
+com\lloyd27\danmaku\rendering\Renderer.class
+com\lloyd27\danmaku\managers\InputManager$1.class
+com\lloyd27\danmaku\rendering\Sprite.class
+com\lloyd27\danmaku\entity\Player.class
+com\lloyd27\danmaku\entity\Entity.class
+com\lloyd27\danmaku\managers\CollisionManager.class
+com\lloyd27\danmaku\managers\InputManager.class
+com\lloyd27\danmaku\entity\Bullet\NeedleBullet.class
+com\lloyd27\danmaku\entity\weapon\NeedleWeapon.class
