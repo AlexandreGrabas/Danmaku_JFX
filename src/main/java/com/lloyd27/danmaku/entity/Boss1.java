@@ -7,21 +7,24 @@ import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeaponEnemy1;
+import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Enemy1 extends AbstractEnemyShooter{
+public class Boss1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
+    private int cpt=0;
     private boolean alternance=true;
 
-    public Enemy1(double x, double y) {
+    public Boss1(double x, double y) {
         super(x, y);
-        this.life=25;
-        this.height=20;
-        this.width=20;
-        weapons.add(new SimpleWeaponEnemy1());
+        this.life=500;
+        this.height=50;
+        this.width=50;
+        // weapons.add(new SimpleWeaponEnemy1());
+        wiredWeapons.add(new WiredWeaponEnemy());
     }
 
     public List<AbstractBullet> shoot() {
@@ -39,18 +42,25 @@ public class Enemy1 extends AbstractEnemyShooter{
         }
         return allBullets;
     }
+    
 
     @Override
     public void update(double deltaTime) {
         if(alternance){
         x += 1;
-        y += 1;
-        alternance=false;
+        cpt+=1;
+        if (cpt>=300){
+            alternance=false;
+            cpt=0;
+        }
         }
         else{
-        x += 1;
-        // y += 1;
-        alternance=true;
+        x -= 1;
+        cpt+=1;
+        if (cpt>=300){
+            alternance=true;
+            cpt=0;
+        }
         }
         
         // update arme classiques
@@ -68,8 +78,9 @@ public class Enemy1 extends AbstractEnemyShooter{
     public void render(GraphicsContext gc) {
 
         gc.setFill(Color.DARKRED);
-        gc.fillOval(x - 20, y - 20, 20, 20);
+        gc.fillOval(x - 20, y - 20, 50, 50);
 
     }
+
 
 }

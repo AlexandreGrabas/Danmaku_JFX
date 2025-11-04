@@ -7,8 +7,8 @@ import com.lloyd27.danmaku.entity.Bullet.SimpleBullet;
 
 import java.util.ArrayList;
 
-public class SimpleWeapon extends AbstractWeapon {
-    protected double fireRate = 0.01; // secondes entre tirs
+public class SimpleWeaponEnemy1 extends AbstractWeapon {
+    protected double fireRate = 0.5; // secondes entre tirs
 
     @Override
     public List<AbstractBullet> shoot(double x, double y) {
@@ -16,7 +16,7 @@ public class SimpleWeapon extends AbstractWeapon {
         resetCooldown();
 
         List<AbstractBullet> bullets = new ArrayList<>();
-        bullets.add(new SimpleBullet(x, y - 10, 0, -500,"player")); // tire vers le haut
+        bullets.add(new SimpleBullet(x, y - 10, 0, +500,"enemy")); // tire vers le bas
         return bullets;
     }
 

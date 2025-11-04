@@ -16,12 +16,28 @@ public class Player extends Entity {
     private double shootCooldown = 0;
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private boolean slowMode =false;
+    private double heart;
 
-
-    public Player(double x, double y) {
+    public Player(double x, double y, double heart) {
         super(x, y);
+        this.heart=heart;
+        this.life=1;
+        this.width=8;
+        this.height=8;
         weapons.add(new SimpleWeapon());
         weapons.add(new NeedleWeapon());
+    }
+
+    public double getX(){
+        return this.x;
+    }
+
+    public double getY(){
+        return this.y;
+    }
+
+    public double getHeart(){
+        return this.heart;
     }
 
     public List<AbstractBullet> shoot() {

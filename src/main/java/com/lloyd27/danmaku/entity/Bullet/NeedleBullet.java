@@ -5,8 +5,9 @@ import javafx.scene.paint.Color;
 
 public class NeedleBullet extends AbstractBullet{
 
-    public NeedleBullet(double x, double y, double vx, double vy) {
+    public NeedleBullet(double x, double y, double vx, double vy,String ownerType) {
         super(x, y, vx, vy, 15); // 15 de dégâts
+        this.ownerType = ownerType;
     }
 
     @Override

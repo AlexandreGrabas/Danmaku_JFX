@@ -4,16 +4,11 @@ import java.util.List;
 
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 
-public abstract class AbstractWeapon {
+public abstract class AbstractWiredWeapon {
     protected double cooldown = 0;
     protected boolean slowMode = false;
-    protected String ownerType = "neutral";
 
-    public void setOwnerType(String type) {
-        this.ownerType = type;
-    }   
-
-    public abstract List<AbstractBullet> shoot(double x, double y);
+    public abstract List<AbstractBullet> shoot(double x, double y, double targetX, double targetY);
     
     public void update(double deltaTime) {
         if (cooldown > 0) cooldown -= deltaTime;

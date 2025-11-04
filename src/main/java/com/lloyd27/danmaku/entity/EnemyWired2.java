@@ -6,22 +6,24 @@ import java.util.List;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
-import com.lloyd27.danmaku.entity.weapon.SimpleWeaponEnemy1;
+import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Enemy1 extends AbstractEnemyShooter{
+public class EnemyWired2 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
+    private int cpt=0;
     private boolean alternance=true;
 
-    public Enemy1(double x, double y) {
+    public EnemyWired2(double x, double y) {
         super(x, y);
         this.life=25;
         this.height=20;
         this.width=20;
-        weapons.add(new SimpleWeaponEnemy1());
+        // weapons.add(new SimpleWeaponEnemy1());
+        wiredWeapons.add(new WiredWeaponEnemy());
     }
 
     public List<AbstractBullet> shoot() {
@@ -40,15 +42,15 @@ public class Enemy1 extends AbstractEnemyShooter{
         return allBullets;
     }
 
-    @Override
+        @Override
     public void update(double deltaTime) {
         if(alternance){
-        x += 1;
+        x -= 1;
         y += 1;
         alternance=false;
         }
         else{
-        x += 1;
+        x -= 1;
         // y += 1;
         alternance=true;
         }
@@ -71,5 +73,4 @@ public class Enemy1 extends AbstractEnemyShooter{
         gc.fillOval(x - 20, y - 20, 20, 20);
 
     }
-
 }
