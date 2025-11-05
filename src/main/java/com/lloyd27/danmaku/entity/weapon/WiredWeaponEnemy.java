@@ -10,6 +10,14 @@ import java.util.ArrayList;
 public class WiredWeaponEnemy extends AbstractWiredWeapon {
     protected double fireRate = 0.5; // secondes entre tirs
 
+    public WiredWeaponEnemy(){
+        this.fireRate=0.5;
+    }
+
+    public WiredWeaponEnemy(double fireRate){
+        this.fireRate=fireRate;
+    }
+
     @Override
     public List<AbstractBullet> shoot(double x, double y, double playerX, double playerY) {
         if (!canShoot()) return List.of();

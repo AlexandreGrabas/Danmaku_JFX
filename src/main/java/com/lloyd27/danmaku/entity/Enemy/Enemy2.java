@@ -1,4 +1,4 @@
-package com.lloyd27.danmaku.entity;
+package com.lloyd27.danmaku.entity.Enemy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ import com.lloyd27.danmaku.entity.weapon.SimpleWeaponEnemy1;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Enemy1 extends AbstractEnemyShooter{
+public class Enemy2 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private boolean alternance=true;
 
-    public Enemy1(double x, double y) {
+    public Enemy2(double x, double y) {
         super(x, y);
         this.life=25;
         this.height=20;
@@ -32,6 +32,7 @@ public class Enemy1 extends AbstractEnemyShooter{
         return allBullets;
     }
 
+
     public List<AbstractBullet> shootWired(double playerX, double playerY) {
         List<AbstractBullet> allBullets = new ArrayList<>();
         for (AbstractWiredWeapon w : wiredWeapons) {
@@ -40,15 +41,16 @@ public class Enemy1 extends AbstractEnemyShooter{
         return allBullets;
     }
 
+
     @Override
     public void update(double deltaTime) {
         if(alternance){
-        x += 1;
+        x -= 1;
         y += 1;
         alternance=false;
         }
         else{
-        x += 1;
+        x -= 1;
         // y += 1;
         alternance=true;
         }

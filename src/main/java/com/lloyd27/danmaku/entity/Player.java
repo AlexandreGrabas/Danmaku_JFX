@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 public class Player extends Entity {
     private double speed = 300;
     private boolean up, down, left, right;
-    private double shootCooldown = 0;
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private boolean slowMode =false;
     private double heart;
@@ -21,7 +20,7 @@ public class Player extends Entity {
     public Player(double x, double y, double heart) {
         super(x, y);
         this.heart=heart;
-        this.life=1;
+        this.life=999999999;
         this.width=8;
         this.height=8;
         weapons.add(new SimpleWeapon());

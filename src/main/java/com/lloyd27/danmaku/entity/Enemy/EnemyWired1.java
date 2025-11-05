@@ -1,4 +1,4 @@
-package com.lloyd27.danmaku.entity;
+package com.lloyd27.danmaku.entity.Enemy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 public class EnemyWired1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
-    private int cpt=0;
     private boolean alternance=true;
 
     public EnemyWired1(double x, double y) {

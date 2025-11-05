@@ -1,4 +1,4 @@
-package com.lloyd27.danmaku.entity;
+package com.lloyd27.danmaku.entity.Enemy;
 
 import java.util.ArrayList;
 import java.util.List;

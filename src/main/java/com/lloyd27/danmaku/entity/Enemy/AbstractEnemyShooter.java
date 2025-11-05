@@ -1,6 +1,8 @@
-package com.lloyd27.danmaku.entity;
+package com.lloyd27.danmaku.entity.Enemy;
 
 import java.util.List;
+
+import com.lloyd27.danmaku.entity.Entity;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 
 
