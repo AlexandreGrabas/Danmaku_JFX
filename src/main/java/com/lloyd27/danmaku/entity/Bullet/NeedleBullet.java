@@ -5,13 +5,16 @@ import javafx.scene.paint.Color;
 
 public class NeedleBullet extends AbstractBullet{
 
-    public NeedleBullet(double x, double y, double vx, double vy) {
+    public NeedleBullet(double x, double y, double vx, double vy,String ownerType) {
         super(x, y, vx, vy, 15); // 15 de dégâts
+        this.ownerType = ownerType;
+        this.height=30;
+        this.width=2;
     }
 
     @Override
     public void render(GraphicsContext gc) {
         gc.setFill(Color.WHITE);
-        gc.fillOval(x - 4, y - 4, 2, 30);
+        gc.fillOval(x - width/2, y - height/2, 2, height);
     }
 }

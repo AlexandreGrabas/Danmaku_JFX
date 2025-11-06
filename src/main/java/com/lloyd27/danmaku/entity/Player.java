@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
+import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.managers.SoundManager;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 
 import javafx.scene.paint.Color;
@@ -13,15 +15,56 @@ import javafx.scene.paint.Color;
 public class Player extends Entity {
     private double speed = 300;
     private boolean up, down, left, right;
-    private double shootCooldown = 0;
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private boolean slowMode =false;
+    private double heart;
+    private double bomb;
 
-
-    public Player(double x, double y) {
+    public Player(double x, double y, double heart, double bomb) {
         super(x, y);
+        this.heart=heart;
+        this.life=1;
+        this.bomb=bomb;
+        this.width=8;
+        this.height=8;
         weapons.add(new SimpleWeapon());
         weapons.add(new NeedleWeapon());
+    }
+
+    public double getX(){
+        return this.x;
+    }
+
+    public double getY(){
+        return this.y;
+    }
+
+    public double setX(double x){
+        return this.x=x;
+    }
+
+    public double setY(double y){
+        return this.y=y;
+    }
+
+    public double getHeart(){
+        return this.heart;
+    }
+
+    public double setHeart(double heart){
+        return this.heart=heart;
+    }
+
+    public double getBomb(){
+        return this.bomb;
+    }
+
+    public double setBomb(double bomb){
+        return this.bomb=bomb;
+    }
+
+    public boolean setAlive(boolean alive){
+        return this.alive=alive;
     }
 
     public List<AbstractBullet> shoot() {
@@ -31,6 +74,10 @@ public class Player extends Entity {
             allBullets.addAll(w.shoot(x, y));
         }
         return allBullets;
+    }
+
+    public AbstractBullet useBomb(){
+        return (AbstractBullet) new BombBullet(x, y - 10, 0, -300, "player");
     }
 
     public void slowPlayer(boolean slow) {
@@ -74,6 +121,6 @@ public class Player extends Entity {
 
         //hitbox
         gc.setFill(Color.DARKRED);
-        gc.fillOval(x - 4, y - 4, 8, 8);
+        gc.fillOval(x - width/2, y - height/2, width, height);
     }
 }

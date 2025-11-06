@@ -7,12 +7,18 @@ import javafx.scene.canvas.GraphicsContext;
 public abstract class AbstractBullet extends Entity {
     protected double vx, vy;
     protected double damage;
+    protected String ownerType;
 
     public AbstractBullet(double x, double y, double vx, double vy, double damage) {
         super(x, y);
         this.vx = vx;
         this.vy = vy;
         this.damage = damage;
+        this.life=1;
+    }
+
+    public String getOwnerType() {
+        return ownerType;
     }
 
     @Override
@@ -25,7 +31,7 @@ public abstract class AbstractBullet extends Entity {
     public abstract void render(GraphicsContext gc);
 
     public boolean isOffScreen() {
-        return y < -100 || y > 1000 || x < -10 || x > 810;
+        return y < -100 || y > 1000 || x < -100 || x > 900;
     }
 
     public double getDamage() {
