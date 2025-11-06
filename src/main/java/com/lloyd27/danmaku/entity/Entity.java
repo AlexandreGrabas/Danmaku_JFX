@@ -29,10 +29,25 @@ public abstract class Entity {
         }
     }
 
+    // public boolean intersects(Entity other) {
+    //     return (x < other.x + other.width &&
+    //             x + width > other.x &&
+    //             y < other.y + other.height &&
+    //             y + height > other.y);
+    // }
+
     public boolean intersects(Entity other) {
-        return (x < other.x + other.width &&
-                x + width > other.x &&
-                y < other.y + other.height &&
-                y + height > other.y);
+        // ici x, y sont les centres
+        double dx = x - other.x;
+        double dy = y - other.y;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        double radius = Math.min(width, height) / 2.0;
+        double otherRadius = Math.min(other.width, other.height) / 2.0;
+
+        return distance < (radius + otherRadius);
     }
+
+
+
 }

@@ -9,9 +9,18 @@ import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class AbstractEnemyShooter extends Entity{
+    private boolean canShoot=true;
 
     public AbstractEnemyShooter(double x,double y){
         super(x, y);
+    }
+
+    public boolean getCanShoot(){
+        return(this.canShoot);
+    }
+
+    public void setCanShoot(boolean canShoot){
+        this.canShoot=canShoot;
     }
 
     public abstract List<AbstractBullet> shoot();

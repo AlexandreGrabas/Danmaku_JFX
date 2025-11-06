@@ -4,7 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
 public class InputManager {
-    private boolean up, down, left, right, shoot, slowPlayer;
+    private boolean up, down, left, right, shoot, slowPlayer, bombPlayer;
     public boolean isSlow() { return slowPlayer; }
 
     public InputManager(Scene scene) {
@@ -20,6 +20,7 @@ public class InputManager {
                 case RIGHT -> right = true;
                 case W -> shoot = true;
                 case SHIFT -> slowPlayer = true;
+                case X -> bombPlayer = true;
             }
         });
 
@@ -31,6 +32,7 @@ public class InputManager {
                 case RIGHT -> right = false;
                 case W -> shoot = false;
                 case SHIFT -> slowPlayer = false;
+                case X -> bombPlayer = false;
             }
         });
     }
@@ -41,4 +43,5 @@ public class InputManager {
     public boolean isLeft() { return left; }
     public boolean isRight() { return right; }
     public boolean isShoot() { return shoot; }
+    public boolean isBomb() { return bombPlayer; }
 }

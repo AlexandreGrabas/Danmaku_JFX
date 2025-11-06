@@ -6,7 +6,8 @@ import java.util.List;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
-import com.lloyd27.danmaku.entity.weapon.SimpleWeaponEnemy1;
+import com.lloyd27.danmaku.entity.weapon.KunaiLeftWeapon;
+import com.lloyd27.danmaku.entity.weapon.KunaiRightWeapon;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -20,11 +21,12 @@ public class Boss1 extends AbstractEnemyShooter{
 
     public Boss1(double x, double y) {
         super(x, y);
-        this.life=500;
+        this.life=10000;
         this.height=50;
         this.width=50;
-        // weapons.add(new SimpleWeaponEnemy1());
-        wiredWeapons.add(new WiredWeaponEnemy());
+        weapons.add(new KunaiLeftWeapon());
+        weapons.add(new KunaiRightWeapon());
+        wiredWeapons.add(new WiredWeaponEnemy(0.01));
     }
 
     public List<AbstractBullet> shoot() {
@@ -78,7 +80,7 @@ public class Boss1 extends AbstractEnemyShooter{
     public void render(GraphicsContext gc) {
 
         gc.setFill(Color.DARKRED);
-        gc.fillOval(x - 20, y - 20, 50, 50);
+        gc.fillOval(x - width/2, y - height/2, width, height);
 
     }
 

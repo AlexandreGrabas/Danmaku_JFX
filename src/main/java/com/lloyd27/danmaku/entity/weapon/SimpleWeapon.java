@@ -16,7 +16,7 @@ public class SimpleWeapon extends AbstractWeapon {
         resetCooldown();
 
         List<AbstractBullet> bullets = new ArrayList<>();
-        bullets.add(new SimpleBullet(x, y - 10, 0, -500,"player")); // tire vers le haut
+        bullets.add(new SimpleBullet(x, y - 10, 0, -800,"player")); // tire vers le haut
         return bullets;
     }
 

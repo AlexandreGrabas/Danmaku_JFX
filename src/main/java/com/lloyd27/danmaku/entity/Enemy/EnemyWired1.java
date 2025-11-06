@@ -69,7 +69,7 @@ public class EnemyWired1 extends AbstractEnemyShooter{
     public void render(GraphicsContext gc) {
 
         gc.setFill(Color.DARKRED);
-        gc.fillOval(x - 20, y - 20, 20, 20);
+        gc.fillOval(x - width/2, y - height/2, width, height);
 
     }
 }

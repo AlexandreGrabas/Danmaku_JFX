@@ -18,13 +18,25 @@ public class NeedleWeapon extends AbstractWeapon{
         List<AbstractBullet> bullets = new ArrayList<>();
 
         if (slowMode == true){
-        bullets.add(new NeedleBullet(x - 4, y - 10, 0, -800,"player")); // tire vers le haut
+        bullets.add(new NeedleBullet(x - 6, y - 10, 0, -800,"player")); // tire vers le haut
+        bullets.add(new NeedleBullet(x + 6, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 8, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x + 8, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 10, y - 10, 0, -800,"player"));
         bullets.add(new NeedleBullet(x + 10, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 12, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x + 12, y - 10, 0, -800,"player"));
         return bullets;
         }
         else{
-        bullets.add(new NeedleBullet(x - 16, y - 10, 0, -800,"player")); // tire vers le haut
-        bullets.add(new NeedleBullet(x + 22, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 10, y - 10, 0, -800,"player")); // tire vers le haut
+        bullets.add(new NeedleBullet(x + 10, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 20, y - 10, 0, -800,"player")); 
+        bullets.add(new NeedleBullet(x + 20, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 30, y - 10, 0, -800,"player")); 
+        bullets.add(new NeedleBullet(x + 30, y - 10, 0, -800,"player"));
+        bullets.add(new NeedleBullet(x - 40, y - 10, 0, -800,"player")); 
+        bullets.add(new NeedleBullet(x + 40, y - 10, 0, -800,"player"));
         return bullets;
         }
     }
