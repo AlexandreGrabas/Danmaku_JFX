@@ -1,5 +1,80 @@
 package com.lloyd27.danmaku.Stages;
 
-public class Menu {
+import java.util.ArrayList;
+import java.util.List;
+import com.lloyd27.danmaku.entity.Entity;
+import com.lloyd27.danmaku.managers.InputManager;
+import com.lloyd27.danmaku.managers.SoundManager;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
+public class Menu extends AbstractStage {
+    private boolean startGame = false;
+    private boolean quitGame = false;
+    private InputManager input;
+    private List<Entity> entity = new ArrayList<>();
+    private long index=0;
+
+    public Menu(InputManager input) {
+        this.input = input;
+    }
+
+    @Override
+    public void init() {
+        SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.1, true);
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        // navigation
+        if (input.isUp()) index = 0;
+        if (input.isDown()) index = 1;
+
+        // validation
+        if (input.isShoot()) {
+            if (index == 0) {
+                startGame = true;
+                SoundManager.stopMusic();
+            } else {
+                quitGame = true;
+            }
+        }
+    }
+
+
+    @Override
+    public void render(GraphicsContext gc) {
+
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, 900, 900);
+
+        gc.setFill(Color.WHITE);
+        gc.fillText("DANMAKU PROJECT", 345, 200);
+
+        gc.setFill(index == 0 ? Color.WHITE : Color.GRAY);
+        gc.fillText("Start Game", 370, 400);
+
+        gc.setFill(index == 1 ? Color.WHITE : Color.GRAY);
+        gc.fillText("Quit", 385, 450);
+
+    }
+
+    @Override
+    public List<Entity> getEntity() {
+        return entity;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return startGame || quitGame;
+    }
+
+    public boolean shouldStartGame() {
+        return startGame;
+    }
+
+    public boolean shouldQuitGame() {
+        return quitGame;
+    }
 }

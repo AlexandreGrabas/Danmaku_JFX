@@ -16,7 +16,9 @@ import com.lloyd27.danmaku.entity.Enemy.EnemyKunai1;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
 
-public class Stage1 {
+import javafx.scene.paint.Color;
+
+public class Stage1 extends AbstractStage{
     private List<AbstractEnemyShooter> enemies = new ArrayList<>();
     private Player player;
     private List<Entity> entity = new ArrayList<>();
@@ -31,6 +33,7 @@ public class Stage1 {
     private InputManager input;
     private boolean bossSpawn = false;
     private double timeLastShootSound=0;
+    private boolean finished=false;
 
     public Stage1(InputManager inputManager) {
         this.input=inputManager;
@@ -414,4 +417,24 @@ public class Stage1 {
         entity.add(boss1);
         bossSpawn=true;
     }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
+    }
+
+    @Override
+    public void render(javafx.scene.canvas.GraphicsContext gc) {
+    // On nettoie l’écran (ou pas, selon ton moteur)
+    
+    gc.clearRect(0, 0, 800, 900);
+    gc.setFill(Color.GREY);
+    gc.fillRect(0, 0, 800, 900);
+
+    // Dessine toutes les entités du stage
+    for (Entity e : entity) {
+        e.render(gc);
+    }
+}
+
 }
