@@ -8,13 +8,17 @@ import com.lloyd27.danmaku.managers.SoundManager;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class Menu extends AbstractStage {
     private boolean startGame = false;
     private boolean quitGame = false;
+    private long index=0;
     private InputManager input;
     private List<Entity> entity = new ArrayList<>();
-    private long index=0;
+    private SoundManager soundManager = new SoundManager();
+    private double timeLastUp = 0;
+    private double timeLastDown = 0;
 
     public Menu(InputManager input) {
         this.input = input;
@@ -22,20 +26,32 @@ public class Menu extends AbstractStage {
 
     @Override
     public void init() {
-        SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.1, true);
+        soundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.1, true);
+        input.setAccepted(false);
     }
 
     @Override
     public void update(double deltaTime) {
+        timeLastUp -= deltaTime;
+        timeLastDown -= deltaTime;
+
         // navigation
-        if (input.isUp()) index = 0;
-        if (input.isDown()) index = 1;
+        if (timeLastUp<=0 && input.isUp()) {
+            index -= 1;
+            timeLastUp = 0.2;
+            if(index==-1){index=1;}
+        }
+        if (timeLastDown<=0 && input.isDown()) {
+            index += 1;
+            timeLastDown = 0.2;
+            if(index==2){index=0;}
+        };
 
         // validation
-        if (input.isShoot()) {
+        if (input.isAccepted()) {
             if (index == 0) {
                 startGame = true;
-                SoundManager.stopMusic();
+                soundManager.stopMusic();
             } else {
                 quitGame = true;
             }
@@ -49,14 +65,16 @@ public class Menu extends AbstractStage {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, 900, 900);
 
+        gc.setFont(new Font("Arial", 80));
         gc.setFill(Color.WHITE);
-        gc.fillText("DANMAKU PROJECT", 345, 200);
+        gc.fillText("DANMAKU PROJECT", 1, 200);
 
+        gc.setFont(new Font("Arial", 50));
         gc.setFill(index == 0 ? Color.WHITE : Color.GRAY);
-        gc.fillText("Start Game", 370, 400);
+        gc.fillText("Start Game", 280, 400);
 
         gc.setFill(index == 1 ? Color.WHITE : Color.GRAY);
-        gc.fillText("Quit", 385, 450);
+        gc.fillText("Quit", 350, 500);
 
     }
 
@@ -70,11 +88,15 @@ public class Menu extends AbstractStage {
         return startGame || quitGame;
     }
 
-    public boolean shouldStartGame() {
+    public void setStartGame(boolean startGame){
+        this.startGame=startGame;
+    }
+
+    public boolean isStartGame() {
         return startGame;
     }
 
-    public boolean shouldQuitGame() {
+    public boolean isQuitGame() {
         return quitGame;
     }
 }

@@ -16,7 +16,11 @@ import com.lloyd27.danmaku.entity.Enemy.EnemyKunai1;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 public class Stage1 extends AbstractStage{
     private List<AbstractEnemyShooter> enemies = new ArrayList<>();
@@ -33,7 +37,15 @@ public class Stage1 extends AbstractStage{
     private InputManager input;
     private boolean bossSpawn = false;
     private double timeLastShootSound=0;
-    private boolean finished=false;
+    private double timeLastPause = 0;
+    private boolean pause = false;
+    private boolean returnMenu = false;
+    private boolean quitGame = false;
+    private SoundManager soundManager = new SoundManager();
+    private SoundManager soundManagerPause = new SoundManager();
+    private long index=0;
+    private double timeLastUp = 0;
+    private double timeLastDown = 0;
 
     public Stage1(InputManager inputManager) {
         this.input=inputManager;
@@ -47,12 +59,24 @@ public class Stage1 extends AbstractStage{
         return this.entity;
     }
 
+    public void setReturnMenu(boolean returnMenu){
+        this.returnMenu=returnMenu;
+    }
+
+    public boolean isReturnMenu() {
+        return returnMenu;
+    }
+
+    public boolean isQuitGame() {
+        return quitGame;
+    }
+
     public void init() {
         // Spawn initial
-        this.player = new Player(400, 800, 5, 3);
+        this.player = new Player(400, 800, 2, 3);
         entity.add(this.player);
         
-        SoundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.5, true);
+        soundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.5, true);
         // SoundManager.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
         // SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.3, true);
 
@@ -67,140 +91,190 @@ public class Stage1 extends AbstractStage{
     }
 
     public void update(double deltaTime) {
-        // variable qui garde le temp ecoulée
-        timeSinceStart += deltaTime;
-        timeSinceLastSpawn += deltaTime;
-        timeSinceLastSpawn3 += deltaTime;
-        timeSinceLastSpawnKunai3 +=deltaTime;
-        timeAfterPlayerDead -= 1;
-        timeLastBomb -=1;
-        timeLastShootSound -=deltaTime;
 
+        if (timeLastPause<=0 && input.isPause()) {
+            soundManager.PauseMusic();
+            soundManagerPause.playMusic("musique dascenseur.wav", 0.2, true);
+            input.setAccepted(false);
+            pause=true;
+            timeLastPause=1;
+        }
+        if (pause) {
+            timeLastUp -= deltaTime;
+            timeLastDown -= deltaTime;
+            if (timeLastUp<=0 && input.isUp()) {
+                index -= 1;
+                timeLastUp = 0.2;
+                if(index==-1){index=2;}
+            }
+            if (timeLastDown<=0 && input.isDown()) {
+                index += 1;
+                timeLastDown = 0.2;
+                if(index==3){index=0;}
+            };
 
-        // Gére les différentes phase du stage1
-        if (timeSinceStart < 48 || (timeSinceStart>60 && timeSinceStart<129)) {
-            spawnEnemy(timeSinceLastSpawn3); 
-            spawnEnemy2(timeSinceLastSpawn);
-        }
-        if (timeSinceStart >= 52 && timeSinceStart <=60) {
-            spawnEnemy3(timeSinceLastSpawn); 
-            spawnKunai2(timeSinceLastSpawnKunai3);
-        }
-        if (timeSinceStart >= 100 && timeSinceStart <128) {
-            spawnEnemy4(timeSinceLastSpawn);
-            spawnKunai3(timeSinceLastSpawnKunai3);           
-        }
-        if (timeSinceStart > 129  && bossSpawn == false) {
-                entity.removeIf(e -> e instanceof AbstractEnemyShooter);
-                SoundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.5, true);
-                spawnBoss();
-        }
-
-        if (this.player != null) {
-            this.player.setDirection(input.isUp(), input.isDown(), input.isLeft(), input.isRight());
-            this.player.slowPlayer(input.isSlow());
-
-            if (input.isShoot()) {
-                var bullets = this.player.shoot();
-                if (timeLastShootSound<0 && this.player.isAlive()){
-                     SoundManager.playSound("1760.wav", 0.3);
-                     timeLastShootSound=0.1;
+            if (input.isAccepted()) {
+                if (index == 0) {
+                    soundManagerPause.stopMusic();
+                    soundManager.UnPauseMusic();
+                    if(!this.player.isAlive()){
+                        this.player.setHeart(3);
+                        this.player.setAlive(true);
+                        this.player.setX(400);
+                        this.player.setY(800);
+                        this.player.setSprite(new Image(getClass().getResourceAsStream("/sprites/player_2.png")));
+                        entity.add(this.player);
+                    }
+                    pause = false;
                 }
-                entity.addAll(bullets);
+                else if (index == 1){
+                    returnMenu=true;
+                } 
+                else if(index == 2){
+                    quitGame = true;
+                }
+            }
+        }else{
+            // variable qui garde le temp ecoulée
+            timeSinceStart += deltaTime;
+            timeSinceLastSpawn += deltaTime;
+            timeSinceLastSpawn3 += deltaTime;
+            timeSinceLastSpawnKunai3 +=deltaTime;
+            timeAfterPlayerDead -= 1;
+            timeLastBomb -=1;
+            timeLastShootSound -=deltaTime;
+            timeLastPause -=deltaTime;
+
+
+            // Gére les différentes phase du stage1
+            if (timeSinceStart < 48 || (timeSinceStart>60 && timeSinceStart<129)) {
+                spawnEnemy(timeSinceLastSpawn3); 
+                spawnEnemy2(timeSinceLastSpawn);
+            }
+            if (timeSinceStart >= 52 && timeSinceStart <=60) {
+                spawnEnemy3(timeSinceLastSpawn); 
+                spawnKunai2(timeSinceLastSpawnKunai3);
+            }
+            if (timeSinceStart >= 100 && timeSinceStart <128) {
+                spawnEnemy4(timeSinceLastSpawn);
+                spawnKunai3(timeSinceLastSpawnKunai3);           
+            }
+            if (timeSinceStart > 129  && bossSpawn == false) {
+                    entity.removeIf(e -> e instanceof AbstractEnemyShooter);
+                    soundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.5, true);
+                    spawnBoss();
             }
 
-            if (input.isBomb() && timeLastBomb <=0 && this.player.getBomb()>0 && this.player.isAlive()) {
-                System.out.println("oui");
-                System.out.println(this.player.getBomb());
-                entity.add(this.player.useBomb());
-                this.player.setBomb(this.player.getBomb()-1);
-                timeLastBomb=600;
-                // Supprimer toutes les balles ennemies immédiatement pour éviter les balles fantomes
-                entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
+            if (this.player != null) {
+                this.player.setDirection(input.isUp(), input.isDown(), input.isLeft(), input.isRight());
+                this.player.slowPlayer(input.isSlow());
+
+                if (input.isShoot()) {
+                    var bullets = this.player.shoot();
+                    if (timeLastShootSound<0 && this.player.isAlive()){
+                        soundManager.playSound("1760.wav", 0.3);
+                        timeLastShootSound=0.1;
+                    }
+                    entity.addAll(bullets);
+                }
+
+                if (input.isBomb() && timeLastBomb <=0 && this.player.getBomb()>0 && this.player.isAlive()) {
+                    System.out.println("oui");
+                    System.out.println(this.player.getBomb());
+                    entity.add(this.player.useBomb());
+                    this.player.setBomb(this.player.getBomb()-1);
+                    timeLastBomb=600;
+                    // Supprimer toutes les balles ennemies immédiatement pour éviter les balles fantomes
+                    entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
+                }
             }
-        }
 
-        // gestion des tirs enemy
+            // gestion des tirs enemy
 
-        if ((timeLastBomb<=0)) {
-            for (AbstractEnemyShooter ene : enemies) {
-                if (!ene.isAlive() || !ene.getCanShoot()) continue;
-                var bullets = ene.shoot();
-                bullets.addAll(ene.shootWired(this.player.getX(), this.player.getY()));
-                entity.addAll(bullets);
+            if ((timeLastBomb<=0)) {
+                for (AbstractEnemyShooter ene : enemies) {
+                    if (!ene.isAlive() || !ene.getCanShoot()) continue;
+                    var bullets = ene.shoot();
+                    bullets.addAll(ene.shootWired(this.player.getX(), this.player.getY()));
+                    entity.addAll(bullets);
+                }
             }
-        }
 
-        //initialisation de la liste des entité a supprimer
-        List<Entity> toRemove = new ArrayList<>();
+            //initialisation de la liste des entité a supprimer
+            List<Entity> toRemove = new ArrayList<>();
 
-        //ajout a la liste des entités a supprimer les entité offscreen
-        for (Entity e : entity) {
-            e.update(deltaTime);
-            if (e instanceof AbstractBullet b && b.isOffScreen()) {
-                toRemove.add(e);
+            //ajout a la liste des entités a supprimer les entité offscreen
+            for (Entity e : entity) {
+                e.update(deltaTime);
+                if (e instanceof AbstractBullet b && b.isOffScreen()) {
+                    toRemove.add(e);
+                }
+                if (e instanceof AbstractEnemyShooter b && b.isOffScreen()) {
+                    toRemove.add(e);
+                }
+                if (e.isAlive() == false && !toRemove.contains(e)) {
+                    toRemove.add(e);
+                }
             }
-            if (e instanceof AbstractEnemyShooter b && b.isOffScreen()) {
-                toRemove.add(e);
-            }
-            if (e.isAlive() == false && !toRemove.contains(e)) {
-                toRemove.add(e);
-            }
-        }
 
-        // gestion des domages des bullets
-        for (Entity e : entity) {
-            if (!(e instanceof AbstractBullet bullet) || !bullet.isAlive())
-                continue;
+            // gestion des domages des bullets
+            for (Entity e : entity) {
+                if (!(e instanceof AbstractBullet bullet) || !bullet.isAlive())
+                    continue;
 
-            if ("player".equals(bullet.getOwnerType())) {
-                for (AbstractEnemyShooter enemy : enemies) {
-                    if (!enemy.isAlive())
-                        continue;
-                    if (enemy.intersects(bullet)) {
-                        enemy.takeDamage(bullet.getDamage());
-                        bullet.takeDamage(1); // supprime la balle après impact (car 1 pv)
-                        break; // stop après un impact
+                if ("player".equals(bullet.getOwnerType())) {
+                    for (AbstractEnemyShooter enemy : enemies) {
+                        if (!enemy.isAlive())
+                            continue;
+                        if (enemy.intersects(bullet)) {
+                            enemy.takeDamage(bullet.getDamage());
+                            bullet.takeDamage(1); // supprime la balle après impact (car 1 pv)
+                            break; // stop après un impact
+                        }
+                    }
+                } else if ("enemy".equals(bullet.getOwnerType()) && timeAfterPlayerDead < 0) {
+                    if (this.player != null && this.player.isAlive() && this.player.intersects(bullet)) {
+                        this.player.takeDamage(bullet.getDamage());
+                        bullet.takeDamage(1);
                     }
                 }
-            } else if ("enemy".equals(bullet.getOwnerType()) && timeAfterPlayerDead < 0) {
-                if (this.player != null && this.player.isAlive() && this.player.intersects(bullet)) {
-                    this.player.takeDamage(bullet.getDamage());
-                    bullet.takeDamage(1);
+            }
+
+            // gestion de dommage lorsque le joueur entre en colision avec un enemy
+            for (Entity e : entity) {
+                if (!(e instanceof AbstractEnemyShooter enemyShooter) || !enemyShooter.isAlive())
+                    continue;
+                
+                if (this.player != null && this.player.isAlive() && this.player.intersects(enemyShooter)) {
+                    if(timeAfterPlayerDead<=0 && timeLastBomb<=0){
+                        this.player.takeDamage(1);
+                        enemyShooter.takeDamage(15);
+                    }
                 }
             }
-        }
 
-        // gestion de dommage lorsque le joueur entre en colision avec un enemy
-        for (Entity e : entity) {
-            if (!(e instanceof AbstractEnemyShooter enemyShooter) || !enemyShooter.isAlive())
-                continue;
-            
-            if (this.player != null && this.player.isAlive() && this.player.intersects(enemyShooter)) {
-                if(timeAfterPlayerDead<=0 && timeLastBomb<=0){
-                    this.player.takeDamage(1);
-                    enemyShooter.takeDamage(15);
+            if (toRemove.contains(player)) {
+                double heart = this.player.getHeart();
+                double bomb = this.player.getBomb();
+                heart -= 1;
+                if (heart > 0) {
+                    this.player.setAlive(true);
+                    this.player.setHeart(heart);
+                    this.player.setX(400);
+                    this.player.setY(800);
+                    toRemove.remove(this.player);
+                    timeAfterPlayerDead = 600;
+                } else {
+                    this.player.setHeart(heart);
+                    entity.removeAll(toRemove);
+                    soundManager.PauseMusic();
+                    soundManagerPause.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
+                    input.setAccepted(false);
+                    pause=true;
                 }
-            }
-        }
-
-        if (toRemove.contains(player)) {
-            double heart = this.player.getHeart();
-            double bomb = this.player.getBomb();
-            heart -= 1;
-            if (heart > 0) {
-                this.player.setAlive(true);
-                this.player.setHeart(heart);
-                this.player.setX(400);
-                this.player.setY(800);
-                timeAfterPlayerDead = 600;
-            } else {
-                entity.removeAll(toRemove);
-            }
-        } else {
+            }             
             entity.removeAll(toRemove);
         }
-
     }
 
 
@@ -264,7 +338,7 @@ public class Stage1 extends AbstractStage{
             entity.add(enemy3Stage1);
 
             timeSinceLastSpawn = 0; // on remet le compteur à zéro
-        }
+        }       
     }
 
     private void spawnEnemy3(double time) {
@@ -420,13 +494,12 @@ public class Stage1 extends AbstractStage{
 
     @Override
     public boolean isFinished() {
-        return finished;
+        return quitGame || returnMenu;
     }
 
     @Override
-    public void render(javafx.scene.canvas.GraphicsContext gc) {
-    // On nettoie l’écran (ou pas, selon ton moteur)
-    
+    public void render(GraphicsContext gc) {
+
     gc.clearRect(0, 0, 800, 900);
     gc.setFill(Color.GREY);
     gc.fillRect(0, 0, 800, 900);
@@ -435,6 +508,37 @@ public class Stage1 extends AbstractStage{
     for (Entity e : entity) {
         e.render(gc);
     }
+
+    if(pause){
+        
+        gc.setFill(new Color(0, 0, 0, 0.4));
+        gc.fillRect(0, 0, 900, 900);
+        
+        gc.getCanvas().setEffect(null);
+        gc.setFont(new Font("Arial", 100));
+        if(this.player.getHeart()>0){
+            gc.setFill(Color.BLACK);
+            gc.fillText("PAUSE", 230, 200);
+        }
+        else{
+            gc.setFill(Color.DARKRED);
+            gc.fillText("GAME OVER", 100, 200);
+            gc.setFill(Color.BLACK);
+            gc.strokeText("GAME OVER", 100, 200);
+        }
+
+        gc.setFont(new Font("Arial", 36));
+        gc.setFill(index == 0 ? Color.WHITE: Color.BLACK);
+        gc.fillText("Continuer", 100, 300);
+
+
+        gc.setFill(index == 1 ? Color.WHITE : Color.BLACK);
+        gc.fillText("Menu", 120, 400);
+
+        gc.setFill(index == 2 ? Color.WHITE : Color.BLACK);
+        gc.fillText("Quit", 140, 500);
+    }
 }
+
 
 }

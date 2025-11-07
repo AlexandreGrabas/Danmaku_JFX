@@ -44,10 +44,18 @@ public class Game {
     private void handleStageTransition() {
         lastTime=0;
         if (currentStage instanceof Menu menu) {
-            if (menu.shouldStartGame()) {
+            if (menu.isStartGame()) {
                 currentStage = new Stage1(input);
                 currentStage.init();
-            } else if (menu.shouldQuitGame()) {
+            } else if (menu.isQuitGame()) {
+                System.exit(0);
+            }
+        }
+        else if (currentStage instanceof Stage1 stage1) {
+            if (stage1.isReturnMenu()) { 
+                currentStage = new Menu(input);
+                currentStage.init();
+            } else if (stage1.isQuitGame()) {
                 System.exit(0);
             }
         }

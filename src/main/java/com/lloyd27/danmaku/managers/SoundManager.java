@@ -8,11 +8,11 @@ import java.util.HashMap;
 
 public class SoundManager {
 
-    private static MediaPlayer currentMusic;
-    private static final HashMap<String, AudioClip> soundCache = new HashMap<>();
+    private MediaPlayer currentMusic;
+    private final HashMap<String, AudioClip> soundCache = new HashMap<>();
 
     // Joue une musique (avec option de boucle)
-    public static void playMusic(String fileName, double volume, boolean loop) {
+    public void playMusic(String fileName, double volume, boolean loop) {
         try {
             URL resource = SoundManager.class.getResource("/music/" + fileName);
             if (resource == null) {
@@ -37,8 +37,16 @@ public class SoundManager {
         }
     }
 
+    public void PauseMusic(){
+        currentMusic.pause();
+    }
+
+    public void UnPauseMusic(){
+        currentMusic.play();
+    }
+
     // Joue un son ponctuel (tir, explosion, etc.)
-    public static void playSound(String fileName, double volume) {
+    public void playSound(String fileName, double volume) {
         try {
             AudioClip clip = soundCache.computeIfAbsent(fileName, name -> {
                 URL resource = SoundManager.class.getResource("/sound/" + name);
@@ -60,7 +68,7 @@ public class SoundManager {
     }
 
     // Stoppe la musique en cours
-    public static void stopMusic() {
+    public void stopMusic() {
         if (currentMusic != null) {
             currentMusic.stop();
         }

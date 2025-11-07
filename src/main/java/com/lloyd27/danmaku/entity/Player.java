@@ -7,9 +7,12 @@ import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
-import com.lloyd27.danmaku.managers.SoundManager;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 
+import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 public class Player extends Entity {
@@ -19,6 +22,10 @@ public class Player extends Entity {
     private boolean slowMode =false;
     private double heart;
     private double bomb;
+    private double spriteWidth=70;
+    private double spriteHeight=70;
+    private Image sprite;
+    private Image sprite2;
 
     public Player(double x, double y, double heart, double bomb) {
         super(x, y);
@@ -29,6 +36,10 @@ public class Player extends Entity {
         this.height=8;
         weapons.add(new SimpleWeapon());
         weapons.add(new NeedleWeapon());
+
+        this.sprite2 = new Image(getClass().getResourceAsStream("/sprites/Fire_Effect.png"));
+        sprite = new Image(getClass().getResourceAsStream("/sprites/player_v1.png"));
+        // sprite = new Image(getClass().getResourceAsStream("/sprites/player_2.png"));
     }
 
     public double getX(){
@@ -65,6 +76,10 @@ public class Player extends Entity {
 
     public boolean setAlive(boolean alive){
         return this.alive=alive;
+    }
+
+    public void setSprite(Image sprite){
+        this.sprite=sprite;
     }
 
     public List<AbstractBullet> shoot() {
@@ -115,12 +130,14 @@ public class Player extends Entity {
     }
 
     @Override
-    public void render(javafx.scene.canvas.GraphicsContext gc) {
-        gc.setFill(Color.BLACK);
-        gc.fillRect(x - 10, y - 10, 20, 20);
+    public void render(GraphicsContext gc) {
+        // gc.setFill(Color.BLACK);
+        // gc.fillRect(x - 10, y - 10, 20, 20);
+        gc.drawImage(sprite, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
+        // gc.drawImage(sprite2,0,0,20,20, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
 
         //hitbox
-        gc.setFill(Color.DARKRED);
+        gc.setFill(Color.RED);
         gc.fillOval(x - width/2, y - height/2, width, height);
     }
 }
