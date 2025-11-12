@@ -16,29 +16,38 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 public class Player extends Entity {
-    private double speed = 300;
-    private boolean up, down, left, right;
-    private List<AbstractWeapon> weapons = new ArrayList<>();
-    private boolean slowMode =false;
-    private double heart;
-    private double bomb;
-    private double spriteWidth=70;
-    private double spriteHeight=70;
-    private Image sprite;
-    private Image sprite2;
+    protected String name = "unknow";
+    protected double speed = 300;
+    protected boolean up, down, left, right;
+    protected List<AbstractWeapon> weapons = new ArrayList<>();
+    protected boolean slowMode =false;
+    protected double heart;
+    protected double bomb;
+    protected double score;
+    protected double spriteWidth=70;
+    protected double spriteHeight=70;
+    protected Image sprite;
+
+    // Animation
+    protected int columns = 6;
+    protected int rows = 6;
+    protected int currentFrame = 0;
+    protected double frameTime = 0.02; // durée d’une frame (en secondes)
+    protected double timeSinceLastFrame = 0;
 
     public Player(double x, double y, double heart, double bomb) {
         super(x, y);
         this.heart=heart;
         this.life=1;
         this.bomb=bomb;
+        this.score=0;
         this.width=8;
         this.height=8;
         weapons.add(new SimpleWeapon());
         weapons.add(new NeedleWeapon());
 
-        this.sprite2 = new Image(getClass().getResourceAsStream("/sprites/Fire_Effect.png"));
-        sprite = new Image(getClass().getResourceAsStream("/sprites/player_v1.png"));
+        // sprite = new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36.png"));
+        // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_2.png"));
     }
 
@@ -46,16 +55,22 @@ public class Player extends Entity {
         return this.x;
     }
 
-    public double getY(){
-        return this.y;
-    }
-
     public double setX(double x){
         return this.x=x;
     }
-
+    public double getY(){
+        return this.y;
+    }
     public double setY(double y){
         return this.y=y;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setName(String name){
+        this.name=name;
     }
 
     public double getHeart(){
@@ -74,8 +89,12 @@ public class Player extends Entity {
         return this.bomb=bomb;
     }
 
-    public boolean setAlive(boolean alive){
-        return this.alive=alive;
+    public double getScore(){
+        return this.score;
+    }
+
+    public double setScore(double score){
+        return this.score=score;
     }
 
     public void setSprite(Image sprite){
@@ -127,13 +146,33 @@ public class Player extends Entity {
         for (AbstractWeapon w : weapons) {
             w.update(deltaTime);
         }
+
+        // Animation : avance la frame en fonction du temps
+        timeSinceLastFrame += deltaTime;
+        if (timeSinceLastFrame >= frameTime) {
+            currentFrame = (currentFrame + 1) % (columns * rows);
+            timeSinceLastFrame = 0;
+        }
     }
 
     @Override
     public void render(GraphicsContext gc) {
         // gc.setFill(Color.BLACK);
         // gc.fillRect(x - 10, y - 10, 20, 20);
-        gc.drawImage(sprite, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
+        // gc.drawImage(sprite, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
+
+        
+        double frameWidth = sprite.getWidth() / columns;
+        double frameHeight = sprite.getHeight() / rows;
+
+        int col = currentFrame % columns;
+        int row = currentFrame / columns;
+
+        double sx = col * frameWidth;
+        double sy = row * frameHeight;
+
+        gc.drawImage(sprite,sx, sy, frameWidth, frameHeight,x - spriteWidth / 2, y - spriteHeight / 2,spriteWidth, spriteHeight);
+        // gc.drawImage(sprite,0,0,sprite.getWidth()/6,sprite.getHeight()/6, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
         // gc.drawImage(sprite2,0,0,20,20, x - spriteWidth / 2, y - spriteHeight / 2, spriteWidth, spriteHeight);
 
         //hitbox

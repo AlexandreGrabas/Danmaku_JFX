@@ -6,6 +6,7 @@ import java.util.List;
 import com.lloyd27.danmaku.entity.Entity;
 import com.lloyd27.danmaku.entity.Player;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
+import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.Enemy.AbstractEnemyShooter;
 import com.lloyd27.danmaku.entity.Enemy.Boss1;
 import com.lloyd27.danmaku.entity.Enemy.Enemy1Stage1;
@@ -16,8 +17,8 @@ import com.lloyd27.danmaku.entity.Enemy.EnemyKunai1;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -46,9 +47,15 @@ public class Stage1 extends AbstractStage{
     private long index=0;
     private double timeLastUp = 0;
     private double timeLastDown = 0;
+    private double timeBossDead =0;
+    private boolean bossDead = false;
 
-    public Stage1(InputManager inputManager) {
+    public Stage1(InputManager inputManager, Canvas canvas, Player player) {
         this.input=inputManager;
+        this.canvas = canvas;
+        this.hudCanvas = new Canvas(150, 900);
+        this.player=player;
+        canvas.setWidth(800);
     }
 
     public Player getPlayer(){
@@ -73,10 +80,10 @@ public class Stage1 extends AbstractStage{
 
     public void init() {
         // Spawn initial
-        this.player = new Player(400, 800, 2, 3);
+        // this.player = new Player(400, 800, 20, 3);
         entity.add(this.player);
         
-        soundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.5, true);
+        soundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.2, true);
         // SoundManager.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
         // SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.3, true);
 
@@ -91,6 +98,11 @@ public class Stage1 extends AbstractStage{
     }
 
     public void update(double deltaTime) {
+
+        if(bossDead && timeBossDead>10){
+            soundManager.stopMusic();
+            returnMenu = true;
+        }
 
         if (timeLastPause<=0 && input.isPause()) {
             soundManager.PauseMusic();
@@ -119,10 +131,12 @@ public class Stage1 extends AbstractStage{
                     soundManager.UnPauseMusic();
                     if(!this.player.isAlive()){
                         this.player.setHeart(3);
+                        this.player.setBomb(3);
                         this.player.setAlive(true);
                         this.player.setX(400);
                         this.player.setY(800);
-                        this.player.setSprite(new Image(getClass().getResourceAsStream("/sprites/player_2.png")));
+                        // this.player.setSprite(new Image(getClass().getResourceAsStream("/sprites/player_2_detourer.png")));
+                        // this.player.setSprite(new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36(2).png")));
                         entity.add(this.player);
                     }
                     pause = false;
@@ -144,6 +158,7 @@ public class Stage1 extends AbstractStage{
             timeLastBomb -=1;
             timeLastShootSound -=deltaTime;
             timeLastPause -=deltaTime;
+            timeBossDead +=deltaTime;
 
 
             // Gére les différentes phase du stage1
@@ -161,7 +176,7 @@ public class Stage1 extends AbstractStage{
             }
             if (timeSinceStart > 129  && bossSpawn == false) {
                     entity.removeIf(e -> e instanceof AbstractEnemyShooter);
-                    soundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.5, true);
+                    soundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.3, true);
                     spawnBoss();
             }
 
@@ -172,7 +187,7 @@ public class Stage1 extends AbstractStage{
                 if (input.isShoot()) {
                     var bullets = this.player.shoot();
                     if (timeLastShootSound<0 && this.player.isAlive()){
-                        soundManager.playSound("1760.wav", 0.3);
+                        soundManager.playSound("1760.wav", 0.2);
                         timeLastShootSound=0.1;
                     }
                     entity.addAll(bullets);
@@ -213,6 +228,10 @@ public class Stage1 extends AbstractStage{
                     toRemove.add(e);
                 }
                 if (e.isAlive() == false && !toRemove.contains(e)) {
+                    if (e instanceof AbstractEnemyShooter) {
+                        
+                        this.player.setScore(this.player.getScore()+((AbstractEnemyShooter)e).getScore());
+                    }
                     toRemove.add(e);
                 }
             }
@@ -229,6 +248,7 @@ public class Stage1 extends AbstractStage{
                         if (enemy.intersects(bullet)) {
                             enemy.takeDamage(bullet.getDamage());
                             bullet.takeDamage(1); // supprime la balle après impact (car 1 pv)
+                            player.setScore(player.getScore()+1);
                             break; // stop après un impact
                         }
                     }
@@ -255,11 +275,11 @@ public class Stage1 extends AbstractStage{
 
             if (toRemove.contains(player)) {
                 double heart = this.player.getHeart();
-                double bomb = this.player.getBomb();
                 heart -= 1;
                 if (heart > 0) {
                     this.player.setAlive(true);
                     this.player.setHeart(heart);
+                    this.player.setBomb(3);
                     this.player.setX(400);
                     this.player.setY(800);
                     toRemove.remove(this.player);
@@ -268,11 +288,24 @@ public class Stage1 extends AbstractStage{
                     this.player.setHeart(heart);
                     entity.removeAll(toRemove);
                     soundManager.PauseMusic();
-                    soundManagerPause.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
+                    soundManagerPause.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.2, true);
                     input.setAccepted(false);
                     pause=true;
                 }
-            }             
+            }
+            boolean bossRemove = toRemove.stream().anyMatch(e -> e instanceof Boss1);
+            if(bossRemove){
+                bossDead=true;
+                timeBossDead=0;
+            }
+            boolean hasBombBullet = toRemove.stream().anyMatch(e -> e instanceof BombBullet);
+            if (hasBombBullet) {
+               for (Entity e : entity) {
+                    if (e instanceof AbstractEnemyShooter enemy) {
+                        enemy.takeDamage(250);
+                    }
+                }
+            }     
             entity.removeAll(toRemove);
         }
     }
@@ -285,11 +318,11 @@ public class Stage1 extends AbstractStage{
             //AJOUT LISTE ENEMIES : entity.add()
 
             //Enemy droite
-            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(900, 100);
-            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(900, 75);
-            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(900, 50);
-            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(900, 25);
-            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(900, 0);
+            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(800, 160);
+            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(800, 120);
+            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(800, 80);
+            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(800, 40);
+            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(800, 0);
             enemies.add(enemy1Stage1a);
             enemies.add(enemy1Stage1b);
             enemies.add(enemy1Stage1c);
@@ -302,10 +335,10 @@ public class Stage1 extends AbstractStage{
             entity.add(enemy1Stage1e);
 
             //Enemy gauche
-            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 100);
-            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 75);
-            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 50);
-            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 25);
+            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 160);
+            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 120);
+            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 80);
+            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 40);
             Enemy2Stage1 enemy2Stage1e = new Enemy2Stage1(0, 0);
             enemies.add(enemy2Stage1a);
             enemies.add(enemy2Stage1b);
@@ -329,11 +362,11 @@ public class Stage1 extends AbstractStage{
             //AJOUT LISTE ENEMIES : entity.add()
 
             //Enemy droite
-            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(900, 15);
+            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(900, 20);
             enemies.add(enemy4Stage1);
             entity.add(enemy4Stage1);
             //Enemy gauche
-            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 40);
+            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 60);
             enemies.add(enemy3Stage1);
             entity.add(enemy3Stage1);
 
@@ -348,12 +381,12 @@ public class Stage1 extends AbstractStage{
             //AJOUT LISTE ENEMIES : entity.add()
 
             //Enemy droite
-            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(900, 15);
-            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(900, 100);
-            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(900, 75);
-            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(900, 50);
-            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(900, 25);
-            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(900, 0);
+            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(800, 20);
+            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(800, 160);
+            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(800, 120);
+            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(800, 80);
+            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(800, 40);
+            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(800, 0);
             enemies.add(enemy4Stage1);
             enemies.add(enemy1Stage1a);
             enemies.add(enemy1Stage1b);
@@ -367,11 +400,11 @@ public class Stage1 extends AbstractStage{
             entity.add(enemy1Stage1d);
             entity.add(enemy1Stage1e);
             //Enemy gauche
-            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 40);
-            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 100);
-            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 75);
-            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 50);
-            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 25);
+            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 60);
+            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 160);
+            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 120);
+            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 80);
+            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 40);
             Enemy2Stage1 enemy2Stage1e = new Enemy2Stage1(0, 0);
             enemies.add(enemy3Stage1);
             enemies.add(enemy2Stage1a);
@@ -396,12 +429,12 @@ public class Stage1 extends AbstractStage{
             //AJOUT LISTE ENEMIES : entity.add()
 
             //Enemy droite
-            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(900, 15);
-            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(900, 100);
-            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(900, 75);
-            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(900, 50);
-            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(900, 25);
-            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(900, 0);
+            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(800, 20);
+            Enemy1Stage1 enemy1Stage1a = new Enemy1Stage1(800, 160);
+            Enemy1Stage1 enemy1Stage1b = new Enemy1Stage1(800, 120);
+            Enemy1Stage1 enemy1Stage1c = new Enemy1Stage1(800, 80);
+            Enemy1Stage1 enemy1Stage1d = new Enemy1Stage1(800, 40);
+            Enemy1Stage1 enemy1Stage1e = new Enemy1Stage1(800, 0);
             enemies.add(enemy4Stage1);
             enemies.add(enemy1Stage1a);
             enemies.add(enemy1Stage1b);
@@ -415,11 +448,11 @@ public class Stage1 extends AbstractStage{
             entity.add(enemy1Stage1d);
             entity.add(enemy1Stage1e);
             //Enemy gauche
-            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 40);
-            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 100);
-            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 75);
-            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 50);
-            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 25);
+            Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 60);
+            Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 160);
+            Enemy2Stage1 enemy2Stage1b = new Enemy2Stage1(0, 120);
+            Enemy2Stage1 enemy2Stage1c = new Enemy2Stage1(0, 80);
+            Enemy2Stage1 enemy2Stage1d = new Enemy2Stage1(0, 40);
             Enemy2Stage1 enemy2Stage1e = new Enemy2Stage1(0, 0);
             enemies.add(enemy3Stage1);
             enemies.add(enemy2Stage1a);
@@ -486,7 +519,7 @@ public class Stage1 extends AbstractStage{
     }
 
     private void spawnBoss(){
-        Boss1 boss1 = new Boss1(250, 100);
+        Boss1 boss1 = new Boss1(250, 125);
         enemies.add(boss1);
         entity.add(boss1);
         bossSpawn=true;
@@ -523,7 +556,8 @@ public class Stage1 extends AbstractStage{
         else{
             gc.setFill(Color.DARKRED);
             gc.fillText("GAME OVER", 100, 200);
-            gc.setFill(Color.BLACK);
+            gc.setLineWidth(1);
+            gc.setStroke(Color.BLACK);
             gc.strokeText("GAME OVER", 100, 200);
         }
 
@@ -538,7 +572,12 @@ public class Stage1 extends AbstractStage{
         gc.setFill(index == 2 ? Color.WHITE : Color.BLACK);
         gc.fillText("Quit", 140, 500);
     }
+    if(bossDead && timeBossDead<=3){
+        gc.setFill(Color.BLACK);
+        gc.fillText("STAGE CLEAR", 220, 900-(230*timeBossDead));
+    }else if(bossDead && timeBossDead>3){
+        gc.setFill(Color.BLACK);
+        gc.fillText("STAGE CLEAR", 220, 900-(230*3));
+    }
 }
-
-
 }

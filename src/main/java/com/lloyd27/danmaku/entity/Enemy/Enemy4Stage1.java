@@ -9,18 +9,20 @@ import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeaponEnemy1;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Enemy4Stage1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private boolean alternance=true;
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/gobelin_mage.png"));
 
     public Enemy4Stage1(double x, double y) {
         super(x, y);
         this.life=25;
-        this.height=20;
-        this.width=20;
+        this.height=40;
+        this.width=40;
         weapons.add(new SimpleWeaponEnemy1());
     }
 
@@ -67,9 +69,9 @@ public class Enemy4Stage1 extends AbstractEnemyShooter{
     @Override
     public void render(GraphicsContext gc) {
 
-        gc.setFill(Color.DARKRED);
-        gc.fillOval(x - width/2, y - height/2, width, height);
-
+        // gc.setFill(Color.DARKRED);
+        // gc.fillOval(x - width/2, y - height/2, width, height);
+        gc.drawImage(sprite, x - width/2, y - height/2, width, height);
     }
 
 }

@@ -17,6 +17,10 @@ public class Renderer {
         this.gc = canvas.getGraphicsContext2D();
     }
 
+    public Canvas getCanvas(){
+        return this.canvas;
+    }
+
     public GraphicsContext getGraphicsContext() {
         return gc;
     }

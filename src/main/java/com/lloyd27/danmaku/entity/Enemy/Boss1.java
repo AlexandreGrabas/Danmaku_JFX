@@ -11,6 +11,7 @@ import com.lloyd27.danmaku.entity.weapon.KunaiRightWeapon;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Boss1 extends AbstractEnemyShooter{
@@ -18,12 +19,13 @@ public class Boss1 extends AbstractEnemyShooter{
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private int cpt=0;
     private boolean alternance=true;
+    private Image sprite = new Image("/sprites/boss_v2.png");
 
     public Boss1(double x, double y) {
         super(x, y);
-        this.life=10000;
-        this.height=50;
-        this.width=50;
+        this.life=30000;
+        this.height=125;
+        this.width=125;
         weapons.add(new KunaiLeftWeapon());
         weapons.add(new KunaiRightWeapon());
         wiredWeapons.add(new WiredWeaponEnemy(0.01));
@@ -79,9 +81,9 @@ public class Boss1 extends AbstractEnemyShooter{
     @Override
     public void render(GraphicsContext gc) {
 
-        gc.setFill(Color.DARKRED);
-        gc.fillOval(x - width/2, y - height/2, width, height);
-
+        // gc.setFill(Color.DARKRED);
+        // gc.fillOval(x - width/2, y - height/2, width, height);
+        gc.drawImage(sprite, x - width / 2, y - height / 2, width, height);
     }
 
 

@@ -67,6 +67,10 @@ public class SoundManager {
         }
     }
 
+    public boolean isMusicPlaying() {
+        return currentMusic != null && currentMusic.getStatus() == MediaPlayer.Status.PLAYING;
+    }
+
     // Stoppe la musique en cours
     public void stopMusic() {
         if (currentMusic != null) {

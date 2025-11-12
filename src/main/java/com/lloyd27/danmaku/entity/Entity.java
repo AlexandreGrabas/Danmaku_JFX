@@ -19,6 +19,10 @@ public abstract class Entity {
         return alive;
     }
 
+    public void setAlive(boolean alive){
+        this.alive=alive;
+    }
+
     public abstract void update(double deltaTime);
     public abstract void render(GraphicsContext gc);
 
