@@ -37,7 +37,7 @@ public class PlayerEllie extends Player{
     @Override
     public void update(double deltaTime) {
 
-        double actualSpeed = speed * (slowMode ? 0.5 : 1.0);
+        double actualSpeed = speed * (slowMode ? 0.5 : 1.5);
 
         double dx = 0, dy = 0;
         if (up) {dy -= actualSpeed * deltaTime;}

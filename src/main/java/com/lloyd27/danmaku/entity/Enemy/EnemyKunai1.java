@@ -9,18 +9,20 @@ import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.KunaiWeapon;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class EnemyKunai1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private double time=0;
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/tête_dragon.png"));
 
     public EnemyKunai1(double x, double y) {
         super(x, y);
         this.life=500;
-        this.height=20;
-        this.width=20;
+        this.height=40;
+        this.width=40;
         this.setCanShoot(false);
         weapons.add(new KunaiWeapon(0.3));
     }
@@ -70,9 +72,9 @@ public class EnemyKunai1 extends AbstractEnemyShooter{
     @Override
     public void render(GraphicsContext gc) {
 
-        gc.setFill(Color.DARKORANGE);
-        gc.fillOval(x - width/2, y - height/2, width, height);
-
+        // gc.setFill(Color.DARKORANGE);
+        // gc.fillOval(x - width/2, y - height/2, width, height);
+        gc.drawImage(sprite, x - width/2, y - height/2, width, height);
     }
 
 }

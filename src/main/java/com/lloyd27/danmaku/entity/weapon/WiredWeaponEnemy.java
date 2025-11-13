@@ -31,7 +31,7 @@ public class WiredWeaponEnemy extends AbstractWiredWeapon {
 
         // normalisation du vecteur pour garder une vitesse constante
         double length = Math.sqrt(dx*dx + dy*dy);
-        double speed = 500; // pixels/sec
+        double speed = 300; // pixels/sec
         double vx = dx / length * speed;
         double vy = dy / length * speed;
 

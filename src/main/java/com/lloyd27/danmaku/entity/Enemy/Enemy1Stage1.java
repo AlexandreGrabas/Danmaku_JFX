@@ -21,7 +21,7 @@ public class Enemy1Stage1 extends AbstractEnemyShooter{
     private double loopStartAngle = 0;
     private boolean loopInitialized = false;
     private double loopEnterTime = 0;
-    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/dragonet.png"));
+    private Image sprite=new Image("/sprites/dragonet.png");
 
 
     public Enemy1Stage1(double x, double y) {

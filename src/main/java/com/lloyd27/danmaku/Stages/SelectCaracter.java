@@ -69,11 +69,11 @@ public class SelectCaracter extends AbstractStage {
         // validation
         if (input.isAccepted()) {
             if (index == 0) {
-                player=new PlayerEllie(400, 800, 4, 3);
+                player=new PlayerEllie(400, 800, 3, 3);
                 startGame = true;
                 soundManager.stopMusic();
             } else {
-                player=new PlayerErwin(400, 800, 4, 3);
+                player=new PlayerErwin(400, 800, 3, 3);
                 startGame = true;
                 soundManager.stopMusic();
             }

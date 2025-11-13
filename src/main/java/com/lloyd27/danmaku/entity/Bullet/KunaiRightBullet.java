@@ -5,13 +5,13 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class KunaiRightBullet extends AbstractBullet {
-    private Image sprite=new Image("/sprites/trait_de_feu_gauche.png");
+    private Image sprite=new Image("/sprites/trait_de_feu_droite.png");
 
     public KunaiRightBullet(double x, double y, double vx, double vy,String ownerType) {
         super(x, y, vx, vy, 10); // 10 de dégâts
         this.ownerType = ownerType;
-        this.height=4;
-        this.width=20;
+        this.height=8;
+        this.width=30;
     }
 
     @Override

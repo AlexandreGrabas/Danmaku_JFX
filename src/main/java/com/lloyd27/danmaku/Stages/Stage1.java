@@ -49,6 +49,8 @@ public class Stage1 extends AbstractStage{
     private double timeLastDown = 0;
     private double timeBossDead =0;
     private boolean bossDead = false;
+    private Image background=new Image("/sprites/background.jpg");
+    private double scrollSpeed = 100;
 
     public Stage1(InputManager inputManager, Canvas canvas, Player player) {
         this.input=inputManager;
@@ -133,6 +135,7 @@ public class Stage1 extends AbstractStage{
                         this.player.setHeart(3);
                         this.player.setBomb(3);
                         this.player.setAlive(true);
+                        this.player.setScore(0);
                         this.player.setX(400);
                         this.player.setY(800);
                         // this.player.setSprite(new Image(getClass().getResourceAsStream("/sprites/player_2_detourer.png")));
@@ -142,6 +145,7 @@ public class Stage1 extends AbstractStage{
                     pause = false;
                 }
                 else if (index == 1){
+                    soundManagerPause.stopMusic();
                     returnMenu=true;
                 } 
                 else if(index == 2){
@@ -362,7 +366,7 @@ public class Stage1 extends AbstractStage{
             //AJOUT LISTE ENEMIES : entity.add()
 
             //Enemy droite
-            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(900, 20);
+            Enemy4Stage1 enemy4Stage1 = new Enemy4Stage1(825, 20);
             enemies.add(enemy4Stage1);
             entity.add(enemy4Stage1);
             //Enemy gauche
@@ -399,6 +403,7 @@ public class Stage1 extends AbstractStage{
             entity.add(enemy1Stage1c);
             entity.add(enemy1Stage1d);
             entity.add(enemy1Stage1e);
+
             //Enemy gauche
             Enemy3Stage1 enemy3Stage1 = new Enemy3Stage1(0, 60);
             Enemy2Stage1 enemy2Stage1a = new Enemy2Stage1(0, 160);
@@ -534,10 +539,18 @@ public class Stage1 extends AbstractStage{
     public void render(GraphicsContext gc) {
 
     gc.clearRect(0, 0, 800, 900);
-    gc.setFill(Color.GREY);
-    gc.fillRect(0, 0, 800, 900);
+    // gc.setFill(Color.GREY);
+    // gc.fillRect(0, 0, 800, 900);
 
-    // Dessine toutes les entités du stage
+    
+    // décalage des 2 background
+    double offset = (timeSinceStart * scrollSpeed) % canvas.getHeight();
+
+    // l'image est déssiner 2 fois pour éviter les jump de background
+    gc.drawImage(background, 0, -offset, canvas.getWidth(), canvas.getHeight());
+    gc.drawImage(background, 0, canvas.getHeight() - offset, canvas.getWidth(), canvas.getHeight());
+
+
     for (Entity e : entity) {
         e.render(gc);
     }

@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 
 public class Menu extends AbstractStage {
     private boolean startGame = false;
+    private boolean score = false;
     private boolean quitGame = false;
     private long index=0;
     private InputManager input;
@@ -47,19 +48,21 @@ public class Menu extends AbstractStage {
         if (timeLastUp<=0 && input.isUp()) {
             index -= 1;
             timeLastUp = 0.2;
-            if(index==-1){index=1;}
+            if(index==-1){index=2;}
         }
         if (timeLastDown<=0 && input.isDown()) {
             index += 1;
             timeLastDown = 0.2;
-            if(index==2){index=0;}
+            if(index==3){index=0;}
         };
 
         // validation
         if (input.isAccepted()) {
             if (index == 0) {
                 startGame = true;
-            } else {
+            } else if(index == 1){
+                score=true;
+            }else{
                 quitGame = true;
             }
         }
@@ -81,9 +84,12 @@ public class Menu extends AbstractStage {
         gc.setFont(new Font("Arial", 50));
         gc.setFill(index == 0 ? Color.WHITE : Color.GRAY);
         gc.fillText("Start Game", 355, 400);
-
+        
         gc.setFill(index == 1 ? Color.WHITE : Color.GRAY);
-        gc.fillText("Quit", 425, 500);
+        gc.fillText("Tableau des score", 280, 500);
+
+        gc.setFill(index == 2 ? Color.WHITE : Color.GRAY);
+        gc.fillText("Quit", 425, 600);
 
     }
 
@@ -94,7 +100,7 @@ public class Menu extends AbstractStage {
 
     @Override
     public boolean isFinished() {
-        return startGame || quitGame;
+        return startGame || score || quitGame;
     }
 
     public void setStartGame(boolean startGame){
@@ -103,6 +109,11 @@ public class Menu extends AbstractStage {
 
     public boolean isStartGame() {
         return startGame;
+    }
+
+    
+    public boolean isScore() {
+        return score;
     }
 
     public boolean isQuitGame() {

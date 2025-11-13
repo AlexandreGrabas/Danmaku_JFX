@@ -53,6 +53,7 @@ public class Boss1 extends AbstractEnemyShooter{
         if(alternance){
         x += 1;
         cpt+=1;
+        
         if (cpt>=300){
             alternance=false;
             cpt=0;

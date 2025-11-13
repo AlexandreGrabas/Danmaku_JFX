@@ -81,6 +81,12 @@ public class Game {
 
             } else if (menu.isQuitGame()) {
                 System.exit(0);
+            } else if (menu.isScore()) {
+                currentStage = new StageTableauScore(input, renderer.getCanvas(),soundManager);
+                currentStage.init();
+                
+                // Redimensionner
+                stage.sizeToScene();
             }
         }
         else if (currentStage instanceof SelectCaracter selectCaracter) {
@@ -120,6 +126,17 @@ public class Game {
 
             } else if (stage1.isQuitGame()) {
                 System.exit(0);
+            }
+        }else if (currentStage instanceof StageTableauScore tableauScore) {
+            if(tableauScore.isReturnMenu()){
+                currentStage = new Menu(input, renderer.getCanvas(),soundManager);
+                currentStage.init();
+
+                // Supprime le HUD
+                root.getChildren().remove(hudCanvas);
+
+                // Redimensionner
+                stage.sizeToScene();
             }
         }
     }
