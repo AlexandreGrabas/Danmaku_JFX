@@ -19,14 +19,14 @@ public class StageTableauScore extends AbstractStage {
     private boolean returnMenu = false;
     private InputManager input;
     private List<Entity> entity = new ArrayList<>();
-    private SoundManager soundManager = new SoundManager();
+    private SoundManager soundManager;
     private int index=0;
     private double timeLastUp = 0;
     private double timeLastDown = 0;
     private List<TableauScore> scores = new ArrayList<>();
     private TableauScoresManager tableauScoresManager=new TableauScoresManager();
 
-    public StageTableauScore(InputManager input, Canvas canvas, SoundManager soundManager) {
+    public StageTableauScore(InputManager input, Canvas canvas, SoundManager soundManager, Player player) {
         this.input = input;
         this.canvas = canvas;
         this.hudCanvas = null;
@@ -36,7 +36,6 @@ public class StageTableauScore extends AbstractStage {
 
     @Override
     public void init() {
-        soundManager.stopMusic();
         if (!soundManager.isMusicPlaying()) {
             soundManager.playMusic("musique dascenseur.wav", 0.2, true);
         }
@@ -57,6 +56,7 @@ public class StageTableauScore extends AbstractStage {
 
         // navigation
         if (input.isPause()){
+            soundManager.stopMusic();
             returnMenu=true;
         }
         if (timeLastUp<=0 && input.isLeft()) {
@@ -87,74 +87,74 @@ public class StageTableauScore extends AbstractStage {
         
         if(index==0){
             gc.setFill(Color.rgb(0, 90, 0,1));
-            gc.fillText("ELLIE", 390, 170);
+            gc.fillText("ELLIE", 410, 170);
             gc.fillText("NAME", 250, 230);
-            gc.fillText("SCORE", 520, 230);
+            gc.fillText("SCORE", 560, 230);
             gc.setFill(Color.WHITE);
             for(int i=0;i<10;i++){
                 if (i < scores.size()) {
                     TableauScore scoreEllie = scores.get(i);
                     gc.fillText(scoreEllie.getName(), 250, 250 + 60 * (i + 1));
-                    gc.fillText(String.format("%.0f", scoreEllie.getScore()), 520, 250 + 60 * (i + 1));
+                    gc.fillText(String.format("%.0f", scoreEllie.getScore()), 560, 250 + 60 * (i + 1));
                 }else {
                     gc.fillText("-", 250, 250 + 60 * (i + 1));
-                    gc.fillText("-", 520, 250 + 60 * (i + 1));
+                    gc.fillText("-", 560, 250 + 60 * (i + 1));
                 }
             }
             gc.setStroke(Color.WHITE);
             gc.setLineWidth(10.0);
             gc.strokeLine(875, 450, 925, 500);
-            gc.strokeLine(925, 500, 875, 550);
+            gc.strokeLine(925, 500, 875, 560);
             gc.strokeLine(75, 450, 25, 500);
-            gc.strokeLine(25, 500, 75, 550);
+            gc.strokeLine(25, 500, 75, 560);
             
         }else if(index==1){
             gc.setFill(Color.DARKORANGE);
-            gc.fillText("ERWIN", 380, 170);
+            gc.fillText("ERWIN", 400, 170);
             gc.fillText("NAME", 250, 230);
-            gc.fillText("SCORE", 520, 230);
+            gc.fillText("SCORE", 560, 230);
             gc.setFill(Color.WHITE);
             for(int i=0;i<10;i++){
                 if (i < scores.size()) {
                     TableauScore scoreErwin = scores.get(i);
                     gc.fillText(scoreErwin.getName(), 250, 250 + 60 * (i + 1));
-                    gc.fillText(String.format("%.0f", scoreErwin.getScore()), 520, 250 + 60 * (i + 1));
+                    gc.fillText(String.format("%.0f", scoreErwin.getScore()), 560, 250 + 60 * (i + 1));
                 }else {
                     gc.fillText("-", 250, 250 + 60 * (i + 1));
-                    gc.fillText("-", 520, 250 + 60 * (i + 1));
+                    gc.fillText("-", 560, 250 + 60 * (i + 1));
                 }
             }
             gc.setStroke(Color.WHITE);
             gc.setLineWidth(10.0);
             gc.strokeLine(875, 450, 925, 500);
-            gc.strokeLine(925, 500, 875, 550);
+            gc.strokeLine(925, 500, 875, 560);
             gc.strokeLine(75, 450, 25, 500);
-            gc.strokeLine(25, 500, 75, 550);
+            gc.strokeLine(25, 500, 75, 560);
         }else if(index==2){
             gc.setFill(Color.rgb(0, 90, 0,1));
-            gc.fillText("ELLIE", 290, 170);
+            gc.fillText("ELLIE", 305, 170);
             gc.fillText("NAME", 250, 230);
             gc.setFill(Color.DARKORANGE);
-            gc.fillText("ERWIN", 490, 170);
-            gc.fillText("SCORE", 520, 230);
+            gc.fillText("ERWIN", 505, 170);
+            gc.fillText("SCORE", 560, 230);
             gc.setFill(Color.WHITE);
-            gc.fillText("AND", 402, 170);
+            gc.fillText("AND", 417, 170);
             for(int i=0;i<10;i++){
                 if (i < scores.size()) {
                     TableauScore scoreEllieErwin = scores.get(i);
                     gc.fillText(scoreEllieErwin.getName(), 250, 250 + 60 * (i + 1));
-                    gc.fillText(String.format("%.0f", scoreEllieErwin.getScore()), 520, 250 + 60 * (i + 1));
+                    gc.fillText(String.format("%.0f", scoreEllieErwin.getScore()), 560, 250 + 60 * (i + 1));
                 }else {
                     gc.fillText("-", 250, 250 + 60 * (i + 1));
-                    gc.fillText("-", 520, 250 + 60 * (i + 1));
+                    gc.fillText("-", 560, 250 + 60 * (i + 1));
                 }
             }
             gc.setStroke(Color.WHITE);
             gc.setLineWidth(10.0);
             gc.strokeLine(875, 450, 925, 500);
-            gc.strokeLine(925, 500, 875, 550);
+            gc.strokeLine(925, 500, 875, 560);
             gc.strokeLine(75, 450, 25, 500);
-            gc.strokeLine(25, 500, 75, 550);
+            gc.strokeLine(25, 500, 75, 560);
         }
     
     }

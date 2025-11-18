@@ -75,6 +75,8 @@ public class SoundManager {
     public void stopMusic() {
         if (currentMusic != null) {
             currentMusic.stop();
+            currentMusic.dispose();
+            currentMusic = null; 
         }
     }
 }

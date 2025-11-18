@@ -1,8 +1,10 @@
 package com.lloyd27.danmaku.entity;
 
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
+import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.entity.weapon.WiredWeaponPlayer;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -25,10 +27,13 @@ public class PlayerErwin extends Player{
         this.score=0;
         this.width=8;
         this.height=8;
-        this.name="Erwin";
-        weapons.add(new SimpleWeapon());
-        weapons.add(new NeedleWeapon());
+        this.speed=250;
+        this.name="ERWIN";
 
+        weapons.add(new SimpleWeapon(0,0,0.01));
+        weapons.add(new SimpleWeapon(15,0,0.05));
+        weapons.add(new SimpleWeapon(-15,0,0.05));
+        wiredWeapons.add(new WiredWeaponPlayer());
         sprite = new Image(getClass().getResourceAsStream("/sprites/Erwin_6x6.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_2.png"));
@@ -51,7 +56,9 @@ public class PlayerErwin extends Player{
         for (AbstractWeapon w : weapons) {
             w.update(deltaTime);
         }
-
+        for (AbstractWiredWeapon w : wiredWeapons) {
+            w.update(deltaTime);
+        }
         // Animation : avance la frame en fonction du temps
         timeSinceLastFrame += deltaTime;
         if (timeSinceLastFrame >= frameTime) {

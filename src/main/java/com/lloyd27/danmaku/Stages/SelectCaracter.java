@@ -5,6 +5,7 @@ import java.util.List;
 import com.lloyd27.danmaku.entity.Entity;
 import com.lloyd27.danmaku.entity.Player;
 import com.lloyd27.danmaku.entity.PlayerEllie;
+import com.lloyd27.danmaku.entity.PlayerEllieErwin;
 import com.lloyd27.danmaku.entity.PlayerErwin;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
@@ -22,13 +23,13 @@ public class SelectCaracter extends AbstractStage {
     private long index=0;
     private InputManager input;
     private List<Entity> entity = new ArrayList<>();
-    private SoundManager soundManager = new SoundManager();
+    private SoundManager soundManager;
     private double timeLastUp = 0;
     private double timeLastDown = 0;
     private Image ellie=new Image(getClass().getResourceAsStream("/sprites/Ellie.png"));
     private Image erwin=new Image(getClass().getResourceAsStream("/sprites/Erwin.png"));;
 
-    public SelectCaracter(InputManager input, Canvas canvas, Player player, SoundManager soundManager) {
+    public SelectCaracter(InputManager input, Canvas canvas, SoundManager soundManager, Player player) {
         this.input = input;
         this.canvas = canvas;
         this.hudCanvas = null;
@@ -39,7 +40,6 @@ public class SelectCaracter extends AbstractStage {
 
     @Override
     public void init() {
-        // On ne redémarre pas la musique si elle tourne déjà
         if (!soundManager.isMusicPlaying()) {
             soundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.1, true);
         }
@@ -58,22 +58,26 @@ public class SelectCaracter extends AbstractStage {
         if (timeLastUp<=0 && input.isLeft()) {
             index -= 1;
             timeLastUp = 0.2;
-            if(index==-1){index=1;}
+            if(index==-1){index=2;}
         }
         if (timeLastDown<=0 && input.isRight()) {
             index += 1;
             timeLastDown = 0.2;
-            if(index==2){index=0;}
+            if(index==3){index=0;}
         };
 
         // validation
         if (input.isAccepted()) {
             if (index == 0) {
-                player=new PlayerEllie(400, 800, 3, 3);
+                player=new PlayerEllie(400, 800, 50, 3);
                 startGame = true;
                 soundManager.stopMusic();
-            } else {
+            } else if(index ==1 ){
                 player=new PlayerErwin(400, 800, 3, 3);
+                startGame = true;
+                soundManager.stopMusic();
+            }else if(index == 2){
+                player=new PlayerEllieErwin(400, 800, 3, 3);
                 startGame = true;
                 soundManager.stopMusic();
             }
@@ -103,6 +107,16 @@ public class SelectCaracter extends AbstractStage {
             gc.setFill(Color.DARKORANGE);
             gc.fillText("Erwin", 410, 200);
             gc.drawImage(erwin, 330, 260,400,600);
+        } else if(index==2){
+            gc.setFill(Color.rgb(0, 90, 0,1));
+            gc.fillText("ELLIE", 280, 200);
+            gc.setFill(Color.DARKORANGE);
+            gc.fillText("ERWIN", 525, 200);
+            gc.setFill(Color.WHITE);
+            gc.fillText("AND", 417, 200);
+            gc.drawImage(ellie, 150, 260,350,600);
+            gc.drawImage(erwin, 500, 260,350,640);
+            
         }
         gc.setLineWidth(10.0);
         gc.strokeLine(800, 450, 850, 500);

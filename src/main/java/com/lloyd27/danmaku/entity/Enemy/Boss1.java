@@ -20,6 +20,7 @@ public class Boss1 extends AbstractEnemyShooter{
     private int cpt=0;
     private boolean alternance=true;
     private Image sprite = new Image("/sprites/boss_v2.png");
+    private double lifePourcentage=1;
 
     public Boss1(double x, double y) {
         super(x, y);
@@ -50,6 +51,7 @@ public class Boss1 extends AbstractEnemyShooter{
 
     @Override
     public void update(double deltaTime) {
+        lifePourcentage=life/30000;
         if(alternance){
         x += 1;
         cpt+=1;
@@ -85,6 +87,10 @@ public class Boss1 extends AbstractEnemyShooter{
         // gc.setFill(Color.DARKRED);
         // gc.fillOval(x - width/2, y - height/2, width, height);
         gc.drawImage(sprite, x - width / 2, y - height / 2, width, height);
+        gc.setLineWidth(10.0);
+        gc.setStroke(Color.DARKRED);
+        gc.strokeLine(10, 20, 790*lifePourcentage, 20);
+        gc.setStroke(Color.WHITE);
     }
 
 

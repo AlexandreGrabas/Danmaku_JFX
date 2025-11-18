@@ -30,6 +30,14 @@ public abstract class AbstractBullet extends Entity {
     @Override
     public abstract void render(GraphicsContext gc);
 
+    public void setVx(double vx){
+        this.vx=vx;
+    }
+    
+    public void setVy(double vy){
+        this.vy=vy;
+    }
+
     public boolean isOffScreen() {
         return y < -100 || y > 1000 || x < -100 || x > 900;
     }

@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.lloyd27.danmaku.entity.Entity;
 import com.lloyd27.danmaku.entity.Player;
+import com.lloyd27.danmaku.entity.PlayerEllieErwin;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.Bullet.BombBullet;
+import com.lloyd27.danmaku.entity.Bullet.WiredBulletPlayer;
 import com.lloyd27.danmaku.entity.Enemy.AbstractEnemyShooter;
 import com.lloyd27.danmaku.entity.Enemy.Boss1;
 import com.lloyd27.danmaku.entity.Enemy.Enemy1Stage1;
@@ -16,6 +18,7 @@ import com.lloyd27.danmaku.entity.Enemy.Enemy4Stage1;
 import com.lloyd27.danmaku.entity.Enemy.EnemyKunai1;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
+import com.lloyd27.danmaku.managers.TableauScoresManager;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -41,6 +44,7 @@ public class Stage1 extends AbstractStage{
     private double timeLastPause = 0;
     private boolean pause = false;
     private boolean returnMenu = false;
+    private boolean goTableEndScore = false;
     private boolean quitGame = false;
     private SoundManager soundManager = new SoundManager();
     private SoundManager soundManagerPause = new SoundManager();
@@ -51,6 +55,8 @@ public class Stage1 extends AbstractStage{
     private boolean bossDead = false;
     private Image background=new Image("/sprites/background.jpg");
     private double scrollSpeed = 100;
+    private TableauScoresManager tableauScoresManager=new TableauScoresManager();
+
 
     public Stage1(InputManager inputManager, Canvas canvas, Player player) {
         this.input=inputManager;
@@ -76,6 +82,9 @@ public class Stage1 extends AbstractStage{
         return returnMenu;
     }
 
+    public boolean isGoTableEndScore() {
+        return goTableEndScore;
+    }
     public boolean isQuitGame() {
         return quitGame;
     }
@@ -92,7 +101,7 @@ public class Stage1 extends AbstractStage{
         // entity.removeIf(e -> e instanceof AbstractEnemyShooter);
         // SoundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.5, true);
         // spawnBoss();    
-
+        // this.player.setScore(555555);
     }
 
     public List<AbstractEnemyShooter> getEnemies() {
@@ -101,9 +110,21 @@ public class Stage1 extends AbstractStage{
 
     public void update(double deltaTime) {
 
+        if(input.isSwap()){
+            if(player instanceof PlayerEllieErwin){
+                ((PlayerEllieErwin)this.player).swapPlayer();
+                input.setSwap(false);
+            }
+        }
+
         if(bossDead && timeBossDead>10){
-            soundManager.stopMusic();
-            returnMenu = true;
+            if(player.getScore()>tableauScoresManager.getWorseScore(player.getName())){
+                soundManager.stopMusic();
+                goTableEndScore = true;
+            }else{
+                soundManager.stopMusic();
+                returnMenu = true;
+            }
         }
 
         if (timeLastPause<=0 && input.isPause()) {
@@ -113,6 +134,7 @@ public class Stage1 extends AbstractStage{
             pause=true;
             timeLastPause=1;
         }
+
         if (pause) {
             timeLastUp -= deltaTime;
             timeLastDown -= deltaTime;
@@ -184,12 +206,15 @@ public class Stage1 extends AbstractStage{
                     spawnBoss();
             }
 
+            // Gestion des tirs player
             if (this.player != null) {
                 this.player.setDirection(input.isUp(), input.isDown(), input.isLeft(), input.isRight());
                 this.player.slowPlayer(input.isSlow());
 
                 if (input.isShoot()) {
                     var bullets = this.player.shoot();
+                    bullets.addAll(this.player.shootWired(player.getX(),0));
+                    
                     if (timeLastShootSound<0 && this.player.isAlive()){
                         soundManager.playSound("1760.wav", 0.2);
                         timeLastShootSound=0.1;
@@ -217,6 +242,37 @@ public class Stage1 extends AbstractStage{
                     bullets.addAll(ene.shootWired(this.player.getX(), this.player.getY()));
                     entity.addAll(bullets);
                 }
+            }
+
+            // gestion de l'autowired player
+            for (Entity e1 : entity) {
+                double xTarget=player.getX();
+                double yTarget=0;
+                if (!(e1 instanceof WiredBulletPlayer wiredBulletPlayer) || !wiredBulletPlayer.isAlive())
+                    continue;        
+                double distance=Double.MAX_VALUE;;
+                for (Entity e2 : entity) {
+                    if (!(e2 instanceof AbstractEnemyShooter enemy) || !enemy.isAlive())
+                        continue;
+                    if(distance>Math.sqrt(Math.pow(enemy.getX() - wiredBulletPlayer.getX(), 2) + Math.pow(enemy.getY() - wiredBulletPlayer.getY(), 2))){
+                        distance=Math.sqrt(Math.pow(enemy.getX() - wiredBulletPlayer.getX(), 2) + Math.pow(enemy.getY() - wiredBulletPlayer.getY(), 2));
+                        xTarget=enemy.getX();
+                        yTarget=enemy.getY();
+                    }
+                }
+                if (distance == Double.MAX_VALUE)
+                    continue;
+                // vecteur direction vers le enemy
+                double dx = xTarget - wiredBulletPlayer.getX();
+                double dy = yTarget - wiredBulletPlayer.getY();
+
+                // normalisation du vecteur pour garder une vitesse constante
+                double length = Math.sqrt(dx*dx + dy*dy);
+                double speed = 1000; // pixels/sec
+                double vx = dx / length * speed;
+                double vy = dy / length * speed;
+                wiredBulletPlayer.setVx(vx);
+                wiredBulletPlayer.setVy(vy);
             }
 
             //initialisation de la liste des entité a supprimer
@@ -252,7 +308,7 @@ public class Stage1 extends AbstractStage{
                         if (enemy.intersects(bullet)) {
                             enemy.takeDamage(bullet.getDamage());
                             bullet.takeDamage(1); // supprime la balle après impact (car 1 pv)
-                            player.setScore(player.getScore()+1);
+                            player.setScore(player.getScore()+bullet.getDamage());
                             break; // stop après un impact
                         }
                     }
@@ -532,65 +588,70 @@ public class Stage1 extends AbstractStage{
 
     @Override
     public boolean isFinished() {
-        return quitGame || returnMenu;
+        return quitGame || returnMenu || goTableEndScore;
     }
 
     @Override
     public void render(GraphicsContext gc) {
 
-    gc.clearRect(0, 0, 800, 900);
-    // gc.setFill(Color.GREY);
-    // gc.fillRect(0, 0, 800, 900);
+        gc.clearRect(0, 0, 800, 900);
+        // gc.setFill(Color.GREY);
+        // gc.fillRect(0, 0, 800, 900);
 
-    
-    // décalage des 2 background
-    double offset = (timeSinceStart * scrollSpeed) % canvas.getHeight();
-
-    // l'image est déssiner 2 fois pour éviter les jump de background
-    gc.drawImage(background, 0, -offset, canvas.getWidth(), canvas.getHeight());
-    gc.drawImage(background, 0, canvas.getHeight() - offset, canvas.getWidth(), canvas.getHeight());
-
-
-    for (Entity e : entity) {
-        e.render(gc);
-    }
-
-    if(pause){
         
-        gc.setFill(new Color(0, 0, 0, 0.4));
-        gc.fillRect(0, 0, 900, 900);
-        
-        gc.getCanvas().setEffect(null);
-        gc.setFont(new Font("Arial", 100));
-        if(this.player.getHeart()>0){
+        // décalage des 2 background
+        double offset = (timeSinceStart * scrollSpeed) % canvas.getHeight();
+
+        // l'image est déssiner 2 fois pour éviter les jump de background
+        gc.drawImage(background, 0, -offset, canvas.getWidth(), canvas.getHeight());
+        gc.drawImage(background, 0, canvas.getHeight() - offset, canvas.getWidth(), canvas.getHeight());
+
+
+        for (Entity e : entity) {
+            e.render(gc);
+        }
+
+        if(pause){
+            
+            gc.setFill(new Color(0, 0, 0, 0.4));
+            gc.fillRect(0, 0, 900, 900);
+            
+            gc.getCanvas().setEffect(null);
+            gc.setFont(new Font("Arial", 100));
+            if(this.player.getHeart()>0){
+                gc.setFill(Color.BLACK);
+                gc.fillText("PAUSE", 230, 200);
+            }
+            else{
+                gc.setFill(Color.DARKRED);
+                gc.fillText("GAME OVER", 100, 200);
+                gc.setLineWidth(1);
+                gc.setStroke(Color.BLACK);
+                gc.strokeText("GAME OVER", 100, 200);
+            }
+
+            gc.setFont(new Font("Arial", 36));
+            gc.setFill(index == 0 ? Color.WHITE: Color.BLACK);
+            gc.fillText("Continuer", 100, 300);
+
+
+            gc.setFill(index == 1 ? Color.WHITE : Color.BLACK);
+            gc.fillText("Menu", 120, 400);
+
+            gc.setFill(index == 2 ? Color.WHITE : Color.BLACK);
+            gc.fillText("Quit", 140, 500);
+        }
+        if(bossDead && timeBossDead<=3){
             gc.setFill(Color.BLACK);
-            gc.fillText("PAUSE", 230, 200);
+            gc.setFont(new Font("Arial", 50));
+            gc.fillText("STAGE CLEAR", 220, 900-(230*timeBossDead));
+        }else if(bossDead && timeBossDead>3){
+            gc.setFill(Color.BLACK);
+            gc.setFont(new Font("Arial", 50));
+            gc.fillText("STAGE CLEAR", 220, 900-(230*3));
+            gc.setFont(new Font("Arial", 36));
+            gc.fillText("SCORE", 180, 300);
+            gc.fillText(" "+(int)this.player.getScore(), 480, 300);
         }
-        else{
-            gc.setFill(Color.DARKRED);
-            gc.fillText("GAME OVER", 100, 200);
-            gc.setLineWidth(1);
-            gc.setStroke(Color.BLACK);
-            gc.strokeText("GAME OVER", 100, 200);
-        }
-
-        gc.setFont(new Font("Arial", 36));
-        gc.setFill(index == 0 ? Color.WHITE: Color.BLACK);
-        gc.fillText("Continuer", 100, 300);
-
-
-        gc.setFill(index == 1 ? Color.WHITE : Color.BLACK);
-        gc.fillText("Menu", 120, 400);
-
-        gc.setFill(index == 2 ? Color.WHITE : Color.BLACK);
-        gc.fillText("Quit", 140, 500);
     }
-    if(bossDead && timeBossDead<=3){
-        gc.setFill(Color.BLACK);
-        gc.fillText("STAGE CLEAR", 220, 900-(230*timeBossDead));
-    }else if(bossDead && timeBossDead>3){
-        gc.setFill(Color.BLACK);
-        gc.fillText("STAGE CLEAR", 220, 900-(230*3));
-    }
-}
 }

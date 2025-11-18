@@ -18,11 +18,11 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         
-        tableauScoresManager.ajouterScore("ellie", "ELLIE", 5000);
-        tableauScoresManager.ajouterScore("ellie", "ERWIN", 4500);
-        tableauScoresManager.ajouterScore("erwin", "ERWIN", 5000);
-        tableauScoresManager.ajouterScore("erwin", "ELLIE", 4500);
-        tableauScoresManager.ajouterScore("ELLIE_AND_ERWIN", "E&E", 10000);
+        // tableauScoresManager.ajouterScore("ellie", "ELLIE", 50000);
+        // tableauScoresManager.ajouterScore("ellie", "ERWIN", 45000);
+        // tableauScoresManager.ajouterScore("erwin", "ERWIN", 50000);
+        // tableauScoresManager.ajouterScore("erwin", "ELLIE", 45000);
+        // tableauScoresManager.ajouterScore("ELLIE_AND_ERWIN", "E&E", 100000);
 
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         Canvas hudCanvas = new Canvas(150, HEIGHT);
@@ -35,7 +35,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.sizeToScene();
         stage.show();
-
+        stage.setResizable(false);
         game.start();
     }
 

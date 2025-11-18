@@ -8,6 +8,7 @@ import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
+import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,6 +21,7 @@ public class Player extends Entity {
     protected double speed = 300;
     protected boolean up, down, left, right;
     protected List<AbstractWeapon> weapons = new ArrayList<>();
+    protected List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     protected boolean slowMode =false;
     protected double heart;
     protected double bomb;
@@ -43,8 +45,6 @@ public class Player extends Entity {
         this.score=0;
         this.width=8;
         this.height=8;
-        weapons.add(new SimpleWeapon());
-        weapons.add(new NeedleWeapon());
 
         // sprite = new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
@@ -110,6 +110,14 @@ public class Player extends Entity {
         return allBullets;
     }
 
+        public List<AbstractBullet> shootWired(double enemyX, double enemyY) {
+        List<AbstractBullet> allBullets = new ArrayList<>();
+        for (AbstractWiredWeapon w : wiredWeapons) {
+            allBullets.addAll(w.shoot(x, y, enemyX, enemyY));
+        }
+        return allBullets;
+    }
+
     public AbstractBullet useBomb(){
         return (AbstractBullet) new BombBullet(x, y - 10, 0, -300, "player");
     }
@@ -144,6 +152,9 @@ public class Player extends Entity {
         
 
         for (AbstractWeapon w : weapons) {
+            w.update(deltaTime);
+        }
+        for (AbstractWiredWeapon w : wiredWeapons) {
             w.update(deltaTime);
         }
 

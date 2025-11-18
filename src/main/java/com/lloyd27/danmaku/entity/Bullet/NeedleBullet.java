@@ -8,7 +8,7 @@ public class NeedleBullet extends AbstractBullet{
     private Image sprite=new Image("/sprites/trait_de_feu.png");
 
     public NeedleBullet(double x, double y, double vx, double vy,String ownerType) {
-        super(x, y, vx, vy, 15); // 15 de dégâts
+        super(x, y, vx, vy, 10); // 15 de dégâts
         this.ownerType = ownerType;
         this.height=30;
         this.width=4;

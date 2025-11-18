@@ -50,7 +50,7 @@ public class HUDRenderer {
         gc.setFont(new Font("Arial", 20));
         
         gc.fillText(" CHARACTER:", 0, 20);
-        gc.fillText(player.getName(), 0, 50);
+        gc.fillText(" "+player.getName(), 0, 50);
 
         gc.fillText(" HI SCORE:", 0, 150);
         gc.fillText(" "+(int)score, 0, 180);

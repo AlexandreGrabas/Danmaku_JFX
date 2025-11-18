@@ -32,9 +32,9 @@ public class TableauScoresManager {
     }
 
     // Ajouter un score et ne garder que les 10 meilleurs
-    public void ajouterScore(String personnage, String nom, double valeur) {
+    public void ajouterScore(String personnage, String nameScore, double valeur) {
         List<TableauScore> scores = charger(personnage);
-        scores.add(new TableauScore(nom, valeur));
+        scores.add(new TableauScore(nameScore, valeur));
 
         scores.sort(Comparator.comparingDouble(TableauScore::getScore).reversed());
 
@@ -52,5 +52,15 @@ public class TableauScoresManager {
         }
         return scores.get(0).getScore();
     }
+
+public double getWorseScore(String personnage) {
+    List<TableauScore> scores = charger(personnage);
+    if (scores.isEmpty()) {
+        return 0.0;
+    }
+
+    int index = Math.min(9, scores.size() - 1);
+    return scores.get(index).getScore();
+}
 
 }

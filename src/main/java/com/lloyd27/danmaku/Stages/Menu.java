@@ -32,7 +32,6 @@ public class Menu extends AbstractStage {
 
     @Override
     public void init() {
-        // Ne rejoue la musique que si elle n’est pas déjà en cours
         if (!soundManager.isMusicPlaying()) {
             soundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.1, true);
         }

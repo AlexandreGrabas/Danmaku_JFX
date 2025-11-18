@@ -24,8 +24,11 @@ public class Game {
     private HBox root;
     private Canvas hudCanvas;
     private final SoundManager soundManager = new SoundManager();
+    private Scene scene;
 
     public Game(Canvas canvas, Canvas hudCanvas, Scene scene, HBox root) {
+        this.scene=scene;
+        
         this.renderer = new Renderer(canvas);
         this.hudRenderer = new HUDRenderer(hudCanvas);
 
@@ -73,7 +76,7 @@ public class Game {
 
         if (currentStage instanceof Menu menu) {
             if (menu.isStartGame()) {
-                currentStage = new SelectCaracter(input, renderer.getCanvas(),player,soundManager);
+                currentStage = new SelectCaracter(input, renderer.getCanvas(),soundManager, player);
                 currentStage.init();
                 
                 // Redimensionner
@@ -82,7 +85,8 @@ public class Game {
             } else if (menu.isQuitGame()) {
                 System.exit(0);
             } else if (menu.isScore()) {
-                currentStage = new StageTableauScore(input, renderer.getCanvas(),soundManager);
+                soundManager.stopMusic();
+                currentStage = new StageTableauScore(input, renderer.getCanvas(),soundManager,player);
                 currentStage.init();
                 
                 // Redimensionner
@@ -126,10 +130,31 @@ public class Game {
 
             } else if (stage1.isQuitGame()) {
                 System.exit(0);
+
+            } else if (stage1.isGoTableEndScore()) {
+                currentStage = new StageEndTableauScore(input, renderer.getCanvas(), soundManager, player);
+                currentStage.init();
+
+                // Supprime le HUD
+                root.getChildren().remove(hudCanvas);
+
+                // Redimensionner
+                stage.sizeToScene();
             }
         }else if (currentStage instanceof StageTableauScore tableauScore) {
             if(tableauScore.isReturnMenu()){
                 currentStage = new Menu(input, renderer.getCanvas(),soundManager);
+                currentStage.init();
+
+                // Supprime le HUD
+                root.getChildren().remove(hudCanvas);
+
+                // Redimensionner
+                stage.sizeToScene();
+            }
+        }else if (currentStage instanceof StageEndTableauScore tableauScore) {
+            if(tableauScore.isGoTableScore()){
+                currentStage = new StageTableauScore(input, renderer.getCanvas(), soundManager, player);
                 currentStage.init();
 
                 // Supprime le HUD

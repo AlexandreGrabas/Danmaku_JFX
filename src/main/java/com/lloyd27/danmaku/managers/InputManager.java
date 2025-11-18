@@ -4,7 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
 public class InputManager {
-    private boolean up, down, left, right, shoot, slowPlayer, bombPlayer, pause, accepted;
+    private boolean up, down, left, right, shoot, slowPlayer, bombPlayer, pause, accepted, canceled, swap;
     public boolean isSlow() { return slowPlayer; }
 
     public InputManager(Scene scene) {
@@ -15,6 +15,14 @@ public class InputManager {
         this.accepted=accepted;
     }
 
+    public void setCanceled(boolean canceled){
+        this.canceled=canceled;
+    }
+    
+    public void setSwap(boolean swap){
+        this.swap=swap;
+    }
+
     private void setupKeyListeners(Scene scene) {
         scene.setOnKeyPressed(e -> {
             switch (e.getCode()) {
@@ -23,11 +31,15 @@ public class InputManager {
                 case LEFT -> left = true;
                 case RIGHT -> right = true;
                 case SHIFT -> slowPlayer = true;
-                case X -> bombPlayer = true;
                 case ESCAPE -> pause = true;
+                case C -> swap =(swap) ? false:true;
                 case W -> {
                     shoot = true;
                     accepted=(accepted) ? false:true;
+                }
+                case X -> {
+                    bombPlayer = true;
+                    canceled=(canceled) ? false:true;
                 }
                 // case ESCAPE -> pause=((pause==true) ? false:true);
             }
@@ -54,8 +66,10 @@ public class InputManager {
     public boolean isRight() { return right; }
     public boolean isShoot() { return shoot; }
     public boolean isAccepted() { return accepted;}
+    public boolean isCanceled() { return canceled;}
     public boolean isBomb() { return bombPlayer; }
     public boolean isPause() { return pause; }
+    public boolean isSwap() { return swap; }
     // public boolean isPause(SoundManager soundManagerStage) { 
     //     if(pause){
     //         soundManagerStage.PauseMusic();

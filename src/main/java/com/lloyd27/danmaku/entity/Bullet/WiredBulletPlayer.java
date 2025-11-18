@@ -4,12 +4,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public class SimpleBullet extends AbstractBullet {
+public class WiredBulletPlayer extends AbstractBullet {
     // private Image sprite=new Image("/sprites/Fire_Effect.png");
-    private Image sprite=new Image("/sprites/pitit_feu.png");
+    private Image sprite=new Image("/sprites/autoWiredPlayer.png");
 
-    public SimpleBullet(double x, double y, double vx, double vy,String ownerType) {
-        super(x, y, vx, vy, 10); // 10 de dégâts
+    public WiredBulletPlayer(double x, double y, double vx, double vy,String ownerType) {
+        super(x, y, vx, vy, 2); // 2 de dégâts
         this.ownerType = ownerType;
         this.height=12;
         this.width=12;

@@ -20,7 +20,7 @@ public class Enemy3Stage1 extends AbstractEnemyShooter{
 
     public Enemy3Stage1(double x, double y) {
         super(x, y);
-        this.life=25;
+        this.life=50;
         this.height=40;
         this.width=40;
         weapons.add(new SimpleWeaponEnemy1());
