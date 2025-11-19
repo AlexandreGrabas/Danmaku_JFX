@@ -18,7 +18,7 @@ public class EnemyWired1 extends AbstractEnemyShooter{
 
     public EnemyWired1(double x, double y) {
         super(x, y);
-        this.life=25;
+        this.life=50;
         this.height=20;
         this.width=20;
         // weapons.add(new SimpleWeaponEnemy1());

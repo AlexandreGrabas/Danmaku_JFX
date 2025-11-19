@@ -10,6 +10,12 @@ import com.lloyd27.danmaku.entity.Bullet.NeedleBullet;
 public class NeedleWeapon extends AbstractWeapon{
     protected double fireRate = 0.05; // secondes entre tirs
 
+    public NeedleWeapon(){};
+
+    public NeedleWeapon(double fireRate){
+        this.fireRate=fireRate;
+    };
+
     @Override
     public List<AbstractBullet> shoot(double x, double y) {
         if (!canShoot()) return List.of();

@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class AbstractEnemyShooter extends Entity{
     private boolean canShoot=true;
+    private double score=100;
 
     public AbstractEnemyShooter(double x,double y){
         super(x, y);
@@ -21,6 +22,14 @@ public abstract class AbstractEnemyShooter extends Entity{
 
     public void setCanShoot(boolean canShoot){
         this.canShoot=canShoot;
+    }
+
+    public double getScore(){
+        return(this.score);
+    }
+
+    public void setScore(double score){
+        this.score=score;
     }
 
     public abstract List<AbstractBullet> shoot();

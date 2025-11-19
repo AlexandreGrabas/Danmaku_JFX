@@ -9,6 +9,17 @@ import java.util.ArrayList;
 
 public class SimpleWeapon extends AbstractWeapon {
     protected double fireRate = 0.01; // secondes entre tirs
+    protected double decalageX;
+    protected double decalageY;
+
+    public SimpleWeapon(){
+    }
+
+    public SimpleWeapon(double decalageX, double decalageY, double fireRate){
+        this.decalageX=decalageX;
+        this.decalageY=decalageY;        
+        this.fireRate=fireRate;
+    }
 
     @Override
     public List<AbstractBullet> shoot(double x, double y) {
@@ -16,7 +27,7 @@ public class SimpleWeapon extends AbstractWeapon {
         resetCooldown();
 
         List<AbstractBullet> bullets = new ArrayList<>();
-        bullets.add(new SimpleBullet(x, y - 10, 0, -800,"player")); // tire vers le haut
+        bullets.add(new SimpleBullet(x+decalageX, y+decalageY - 10, 0, -1000,"player")); // tire vers le haut
         return bullets;
     }
 

@@ -9,6 +9,7 @@ import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class Enemy2Stage1 extends AbstractEnemyShooter{
@@ -20,13 +21,14 @@ public class Enemy2Stage1 extends AbstractEnemyShooter{
     private double loopStartAngle = 0;
     private boolean loopInitialized = false;
     private double loopEnterTime = 0;
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/dragonet.png"));
 
 
     public Enemy2Stage1(double x, double y) {
         super(x, y);
-        this.life=25;
-        this.height=20;
-        this.width=20;
+        this.life=50;
+        this.height=40;
+        this.width=40;
         wiredWeapons.add(new WiredWeaponEnemy(2));
     }
 
@@ -57,8 +59,8 @@ public class Enemy2Stage1 extends AbstractEnemyShooter{
 
         // PHASE 1 : descente depuis le bord droit de l'ecran
         if(time<2){
-            x += 0.7;
-            y += 0.6;
+            x += 0.55;
+            y += 0.5;
         }
         // PHASE 2 : temps d'arret
         else if (time >= 2 && time < 3) {
@@ -105,8 +107,8 @@ public class Enemy2Stage1 extends AbstractEnemyShooter{
     @Override
     public void render(GraphicsContext gc) {
 
-        gc.setFill(Color.DARKRED);
-        gc.fillOval(x - width/2, y - height/2, width, height);
-
+        // gc.setFill(Color.DARKRED);
+        // gc.fillOval(x - width/2, y - height/2, width, height);
+        gc.drawImage(sprite, x - width/2, y - height/2, width, height);
     }
 }
