@@ -56,6 +56,8 @@ public class Stage1 extends AbstractStage{
     private Image background=new Image("/sprites/background.jpg");
     private double scrollSpeed = 100;
     private TableauScoresManager tableauScoresManager=new TableauScoresManager();
+    private double bossHeart;
+    private Boss1 boss1;
 
 
     public Stage1(InputManager inputManager, Canvas canvas, Player player) {
@@ -109,6 +111,11 @@ public class Stage1 extends AbstractStage{
     }
 
     public void update(double deltaTime) {
+
+        if(bossSpawn && boss1.getHeart()<bossHeart){
+            bossHeart-=1;
+            entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
+        }
 
         if(input.isSwap()){
             if(player instanceof PlayerEllieErwin){
@@ -206,6 +213,18 @@ public class Stage1 extends AbstractStage{
                     spawnBoss();
             }
 
+
+            // gestion des tirs enemy
+
+            if ((timeLastBomb<=0)) {
+                for (AbstractEnemyShooter ene : enemies) {
+                    if (!ene.isAlive() || !ene.getCanShoot()) continue;
+                    var bullets = ene.shoot();
+                    bullets.addAll(ene.shootWired(this.player.getX(), this.player.getY()));
+                    entity.addAll(bullets);
+                }
+            }
+
             // Gestion des tirs player
             if (this.player != null) {
                 this.player.setDirection(input.isUp(), input.isDown(), input.isLeft(), input.isRight());
@@ -230,17 +249,6 @@ public class Stage1 extends AbstractStage{
                     timeLastBomb=600;
                     // Supprimer toutes les balles ennemies immédiatement pour éviter les balles fantomes
                     entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
-                }
-            }
-
-            // gestion des tirs enemy
-
-            if ((timeLastBomb<=0)) {
-                for (AbstractEnemyShooter ene : enemies) {
-                    if (!ene.isAlive() || !ene.getCanShoot()) continue;
-                    var bullets = ene.shoot();
-                    bullets.addAll(ene.shootWired(this.player.getX(), this.player.getY()));
-                    entity.addAll(bullets);
                 }
             }
 
@@ -289,8 +297,8 @@ public class Stage1 extends AbstractStage{
                 }
                 if (e.isAlive() == false && !toRemove.contains(e)) {
                     if (e instanceof AbstractEnemyShooter) {
-                        
-                        this.player.setScore(this.player.getScore()+((AbstractEnemyShooter)e).getScore());
+                        this.player.earnScore(((AbstractEnemyShooter)e).getScore());
+                        // this.player.setScore(this.player.getScore()+((AbstractEnemyShooter)e).getScore());
                     }
                     toRemove.add(e);
                 }
@@ -308,7 +316,8 @@ public class Stage1 extends AbstractStage{
                         if (enemy.intersects(bullet)) {
                             enemy.takeDamage(bullet.getDamage());
                             bullet.takeDamage(1); // supprime la balle après impact (car 1 pv)
-                            player.setScore(player.getScore()+bullet.getDamage());
+                            this.player.earnScore(bullet.getDamage());
+                            // player.setScore(player.getScore()+bullet.getDamage());
                             break; // stop après un impact
                         }
                     }
@@ -355,6 +364,7 @@ public class Stage1 extends AbstractStage{
             }
             boolean bossRemove = toRemove.stream().anyMatch(e -> e instanceof Boss1);
             if(bossRemove){
+                entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
                 bossDead=true;
                 timeBossDead=0;
             }
@@ -580,9 +590,11 @@ public class Stage1 extends AbstractStage{
     }
 
     private void spawnBoss(){
-        Boss1 boss1 = new Boss1(250, 125);
+        entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
+        this.boss1 = new Boss1(250, 125);
         enemies.add(boss1);
         entity.add(boss1);
+        this.bossHeart=boss1.getHeart();
         bossSpawn=true;
     }
 

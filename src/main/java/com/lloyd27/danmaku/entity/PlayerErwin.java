@@ -25,8 +25,8 @@ public class PlayerErwin extends Player{
         super(x, y, heart, bomb);
         this.life=1;
         this.score=0;
-        this.width=8;
-        this.height=8;
+        this.width=6;
+        this.height=6;
         this.speed=250;
         this.name="ERWIN";
 

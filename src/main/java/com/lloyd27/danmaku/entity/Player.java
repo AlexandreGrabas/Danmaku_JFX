@@ -36,6 +36,8 @@ public class Player extends Entity {
     protected int currentFrame = 0;
     protected double frameTime = 0.02; // durée d’une frame (en secondes)
     protected double timeSinceLastFrame = 0;
+    private int nextExtraLifeScore = 100000;   // score de la prochaine vie
+    private int lifeStep = 100000;    
 
     public Player(double x, double y, double heart, double bomb) {
         super(x, y);
@@ -43,8 +45,8 @@ public class Player extends Entity {
         this.life=1;
         this.bomb=bomb;
         this.score=0;
-        this.width=8;
-        this.height=8;
+        this.width=6;
+        this.height=6;
 
         // sprite = new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
@@ -95,6 +97,14 @@ public class Player extends Entity {
 
     public double setScore(double score){
         return this.score=score;
+    }
+
+    public void earnScore(double score){
+        this.score=this.score+score;
+        if(score>nextExtraLifeScore){
+            heart+=1;
+            nextExtraLifeScore+=lifeStep;
+        }
     }
 
     public void setSprite(Image sprite){

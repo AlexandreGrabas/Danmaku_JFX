@@ -1,6 +1,8 @@
 package com.lloyd27.danmaku.entity.Bullet;
 
 import com.lloyd27.danmaku.entity.Entity;
+import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
+import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 
 import javafx.scene.canvas.GraphicsContext;
 
@@ -29,6 +31,14 @@ public abstract class AbstractBullet extends Entity {
 
     @Override
     public abstract void render(GraphicsContext gc);
+
+    public void setX(double x){
+        this.x=x;
+    }
+    
+    public double getX(){
+        return this.x;
+    }
 
     public void setVx(double vx){
         this.vx=vx;
