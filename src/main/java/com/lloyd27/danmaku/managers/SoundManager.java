@@ -11,6 +11,19 @@ public class SoundManager {
     private MediaPlayer currentMusic;
     private final HashMap<String, AudioClip> soundCache = new HashMap<>();
 
+    // Précharge un son dès le lancement du Stage
+    public void preloadSound(String fileName) {
+        URL resource = SoundManager.class.getResource("/sound/" + fileName);
+        if (resource == null) {
+            System.err.println("⚠️ Sound not found: " + fileName);
+            return;
+        }
+
+        // Crée et stocke le son en RAM → instantané au moment du play()
+        AudioClip clip = new AudioClip(resource.toString());
+        soundCache.put(fileName, clip);
+    }
+
     // Joue une musique (avec option de boucle)
     public void playMusic(String fileName, double volume, boolean loop) {
         try {
@@ -45,22 +58,23 @@ public class SoundManager {
         currentMusic.play();
     }
 
-    // Joue un son ponctuel (tir, explosion, etc.)
     public void playSound(String fileName, double volume) {
         try {
-            AudioClip clip = soundCache.computeIfAbsent(fileName, name -> {
-                URL resource = SoundManager.class.getResource("/sound/" + name);
-                if (resource == null) {
-                    System.err.println("⚠️ Sound not found: " + name);
-                    return null;
-                }
-                return new AudioClip(resource.toString());
-            });
+            AudioClip clip = soundCache.get(fileName);
 
-            if (clip != null) {
-                clip.setVolume(volume);
-                clip.play();
+            // Si non préchargé → fallback mais avec latence
+            if (clip == null) {
+                URL resource = SoundManager.class.getResource("/sound/" + fileName);
+                if (resource == null) {
+                    System.err.println("⚠️ Sound not found: " + fileName);
+                    return;
+                }
+                clip = new AudioClip(resource.toString());
+                soundCache.put(fileName, clip);
             }
+
+            clip.setVolume(volume);
+            clip.play();
 
         } catch (Exception e) {
             e.printStackTrace();

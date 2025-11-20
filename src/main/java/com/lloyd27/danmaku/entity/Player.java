@@ -7,6 +7,7 @@ import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.managers.SoundManager;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 
@@ -29,6 +30,7 @@ public class Player extends Entity {
     protected double spriteWidth=70;
     protected double spriteHeight=70;
     protected Image sprite;
+    protected SoundManager soundManager = new SoundManager();
 
     // Animation
     protected int columns = 6;
@@ -51,6 +53,10 @@ public class Player extends Entity {
         // sprite = new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_2.png"));
+    }
+
+    public void audioPlayerDeath(){
+        soundManager.playSound("death.wav", 2);
     }
 
     public double getX(){
@@ -120,7 +126,7 @@ public class Player extends Entity {
         return allBullets;
     }
 
-        public List<AbstractBullet> shootWired(double enemyX, double enemyY) {
+    public List<AbstractBullet> shootWired(double enemyX, double enemyY) {
         List<AbstractBullet> allBullets = new ArrayList<>();
         for (AbstractWiredWeapon w : wiredWeapons) {
             allBullets.addAll(w.shoot(x, y, enemyX, enemyY));

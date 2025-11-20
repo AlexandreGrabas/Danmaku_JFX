@@ -12,6 +12,7 @@ import com.lloyd27.danmaku.entity.weapon.WeaponBulletRound;
 import com.lloyd27.danmaku.entity.weapon.WeaponLineLeft;
 import com.lloyd27.danmaku.entity.weapon.WeaponLineRight;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponEnemy;
+import com.lloyd27.danmaku.managers.SoundManager;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -29,7 +30,11 @@ public class Boss1 extends AbstractEnemyShooter{
     private double lifeMax;
     private double swapPhase=0;
     private boolean canShoot=true;
-    private double timeLastPhase = 60;
+    private double timeLastPhase = 50;
+    private SoundManager soundManager=new SoundManager();
+    private double lastFireSound = 0;
+    private double FireSoundFireRate = 3;
+    private SoundManager soundDeath=new SoundManager();
 
     public Boss1(double x, double y) {
         super(x, y);
@@ -46,6 +51,10 @@ public class Boss1 extends AbstractEnemyShooter{
         List<AbstractBullet> allBullets = new ArrayList<>();
         for (AbstractWeapon w : weapons) {
             allBullets.addAll(w.shoot(x, y));
+            if(lastFireSound<=0){
+                soundManager.playSound("feuSound.wav", 0.15);
+                lastFireSound=FireSoundFireRate;
+            }
         }
         return allBullets;
     }
@@ -64,8 +73,15 @@ public class Boss1 extends AbstractEnemyShooter{
 
     @Override
     public boolean isAlive(){
-        if(alive==false){
+        gestionPhase();
+        return alive;
+    }
 
+    public void gestionPhase(){
+        if(alive==false){
+            if(heart>0){
+                soundDeath.playSound("death.wav", 2);
+            }
             heart-=1;
             canShoot = false;
             swapPhase=2;
@@ -73,55 +89,70 @@ public class Boss1 extends AbstractEnemyShooter{
             if(heart==5){
                 this.life=30000;
                 this.lifeMax=30000;
-                this.timeLastPhase=60;
+                this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
                 weapons.add(new WeaponBulletRound(20,0.2));
+                lastFireSound=2;
+                FireSoundFireRate=0.2;
+                soundManager.playSound("feuSound.wav", 0.15);
             }
             if(heart==4){
                 this.life=20000;
                 this.lifeMax=20000;
-                this.timeLastPhase=60;
+                this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
                 weapons.add(new KunaiLeftWeapon());
                 weapons.add(new KunaiRightWeapon());
                 wiredWeapons.add(new WiredWeaponEnemy(0.01));
+                lastFireSound=2;
+                FireSoundFireRate=0.15;
+                soundManager.playSound("feuSound.wav", 0.2);
             }
             if(heart==3){
                 this.life=25000;
                 this.lifeMax=25000;
-                this.timeLastPhase=60;
+                this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
                 weapons.add(new WeaponBulletRound(40,0.15));
+                lastFireSound=2;
+                FireSoundFireRate=0.3;
+                soundManager.playSound("feuSound.wav", 0.15);
             }
             if(heart==2){
                 this.life=25000;
                 this.lifeMax=25000;
-                this.timeLastPhase=60;
+                this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
                 weapons.add(new WeaponBulletRound(60,1));
+                lastFireSound=2;
+                FireSoundFireRate=1;
+                soundManager.playSound("feuSound.wav", 0.15);
             }
             if(heart==1){
                 this.life=20000;
                 this.lifeMax=20000;
-                this.timeLastPhase=60;
+                this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
                 weapons.add(new WeaponBulletRound(60,0.15));
+                lastFireSound=2;
+                FireSoundFireRate=0.3;
+                soundManager.playSound("feuSound.wav", 0.15);
             }
             if(heart>0){
                 alive=true;
             }
             
         }
-        return alive;
     }
 
     @Override
     public void update(double deltaTime) {
+        lastFireSound-=deltaTime;
         this.timeLastPhase-=deltaTime;
         lifePourcentage=life/lifeMax;
 

@@ -95,7 +95,8 @@ public class Stage1 extends AbstractStage{
         // Spawn initial
         // this.player = new Player(400, 800, 20, 3);
         entity.add(this.player);
-        
+        soundManager.preloadSound("death.wav");
+        soundManager.preloadSound("1760.wav");
         soundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.2, true);
         // SoundManager.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
         // SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.3, true);
@@ -209,7 +210,6 @@ public class Stage1 extends AbstractStage{
             }
             if (timeSinceStart > 129  && bossSpawn == false) {
                     entity.removeIf(e -> e instanceof AbstractEnemyShooter);
-                    soundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.3, true);
                     spawnBoss();
             }
 
@@ -238,7 +238,7 @@ public class Stage1 extends AbstractStage{
                         soundManager.playSound("1760.wav", 0.2);
                         timeLastShootSound=0.1;
                     }
-                    entity.addAll(bullets);
+                    entity.addAll(0,bullets);
                 }
 
                 if (input.isBomb() && timeLastBomb <=0 && this.player.getBomb()>0 && this.player.isAlive()) {
@@ -298,7 +298,6 @@ public class Stage1 extends AbstractStage{
                 if (e.isAlive() == false && !toRemove.contains(e)) {
                     if (e instanceof AbstractEnemyShooter) {
                         this.player.earnScore(((AbstractEnemyShooter)e).getScore());
-                        // this.player.setScore(this.player.getScore()+((AbstractEnemyShooter)e).getScore());
                     }
                     toRemove.add(e);
                 }
@@ -343,6 +342,7 @@ public class Stage1 extends AbstractStage{
             }
 
             if (toRemove.contains(player)) {
+                soundManager.playSound("death.wav", 2);
                 double heart = this.player.getHeart();
                 heart -= 1;
                 if (heart > 0) {
@@ -590,6 +590,7 @@ public class Stage1 extends AbstractStage{
     }
 
     private void spawnBoss(){
+        soundManager.playMusic("【東方虹龍洞】Touhou 18 OST - Fortunate Kitten (Mike Goutokujis Theme).mp3", 0.3, true);
         entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
         this.boss1 = new Boss1(250, 125);
         enemies.add(boss1);
