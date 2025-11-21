@@ -17,6 +17,7 @@ public class WiredWeaponEnemy extends AbstractWiredWeapon {
     public WiredWeaponEnemy(double fireRate){
         this.fireRate=fireRate;
     }
+    
 
     @Override
     public List<AbstractBullet> shoot(double x, double y, double playerX, double playerY) {

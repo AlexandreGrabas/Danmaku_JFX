@@ -135,7 +135,7 @@ public class Player extends Entity {
     }
 
     public AbstractBullet useBomb(){
-        return (AbstractBullet) new BombBullet(x, y - 10, 0, -300, "player");
+        return (AbstractBullet) new BombBullet(400, 890, 0, -300, "player");
     }
 
     public void slowPlayer(boolean slow) {

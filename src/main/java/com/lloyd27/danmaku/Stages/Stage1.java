@@ -15,6 +15,10 @@ import com.lloyd27.danmaku.entity.Enemy.Enemy1Stage1;
 import com.lloyd27.danmaku.entity.Enemy.Enemy2Stage1;
 import com.lloyd27.danmaku.entity.Enemy.Enemy3Stage1;
 import com.lloyd27.danmaku.entity.Enemy.Enemy4Stage1;
+import com.lloyd27.danmaku.entity.Enemy.Enemy5Stage1;
+import com.lloyd27.danmaku.entity.Enemy.Enemy6Stage1;
+import com.lloyd27.danmaku.entity.Enemy.Enemy7Stage1;
+import com.lloyd27.danmaku.entity.Enemy.Enemy8Stage1;
 import com.lloyd27.danmaku.entity.Enemy.EnemyKunai1;
 import com.lloyd27.danmaku.managers.InputManager;
 import com.lloyd27.danmaku.managers.SoundManager;
@@ -34,6 +38,8 @@ public class Stage1 extends AbstractStage{
     private double timeSinceLastSpawn = 0;
     private double timeSinceLastSpawn3 = 0;
     private double timeSinceLastSpawnKunai3 = 0;
+    private double timeSinceLastSpawnEnemy7 = 2;
+    private double timeSinceLastSpawnEnemy7b = 0;
     private double cptKunai2 = 3;
     private double cptKunai3 = 15;
     private double timeAfterPlayerDead = 0;
@@ -48,6 +54,7 @@ public class Stage1 extends AbstractStage{
     private boolean quitGame = false;
     private SoundManager soundManager = new SoundManager();
     private SoundManager soundManagerPause = new SoundManager();
+    private SoundManager soundManagerBomb = new SoundManager();
     private long index=0;
     private double timeLastUp = 0;
     private double timeLastDown = 0;
@@ -58,6 +65,10 @@ public class Stage1 extends AbstractStage{
     private TableauScoresManager tableauScoresManager=new TableauScoresManager();
     private double bossHeart;
     private Boss1 boss1;
+    private boolean spawnEnemy5=true;
+    private boolean spawnEnemy6=true;
+    private boolean spawnEnemy7r=true;
+    private boolean spawnEnemy7l=true;
 
 
     public Stage1(InputManager inputManager, Canvas canvas, Player player) {
@@ -97,6 +108,8 @@ public class Stage1 extends AbstractStage{
         entity.add(this.player);
         soundManager.preloadSound("death.wav");
         soundManager.preloadSound("1760.wav");
+        soundManager.preloadSound("fireRotating.wav");
+        soundManager.preloadSound("explosion.wav");
         soundManager.playMusic("Sora no Kiseki FC OST - Sophisticated Fight.mp3", 0.2, true);
         // SoundManager.playMusic("Mystical Power Plant - 02 Alleyway of Roaring Waves.mp3", 0.3, true);
         // SoundManager.playMusic("The Boy Who Shattered Time (MitiS Remix).mp3", 0.3, true);
@@ -162,7 +175,7 @@ public class Stage1 extends AbstractStage{
                     soundManagerPause.stopMusic();
                     soundManager.UnPauseMusic();
                     if(!this.player.isAlive()){
-                        this.player.setHeart(3);
+                        this.player.setHeart(5);
                         this.player.setBomb(3);
                         this.player.setAlive(true);
                         this.player.setScore(0);
@@ -196,13 +209,31 @@ public class Stage1 extends AbstractStage{
 
 
             // Gére les différentes phase du stage1
-            if (timeSinceStart < 48 || (timeSinceStart>60 && timeSinceStart<129)) {
+            if (timeSinceStart < 22 || (timeSinceStart>100 && timeSinceStart<129)) {
                 spawnEnemy(timeSinceLastSpawn3); 
                 spawnEnemy2(timeSinceLastSpawn);
+            }
+            if(spawnEnemy5 && timeSinceStart>25 && timeSinceStart<37){
+                spawnEnemy5();
+            }
+            if(spawnEnemy6 && timeSinceStart>37 && timeSinceStart<48){
+                spawnEnemy6();
+                spawnEnemy5=true;
             }
             if (timeSinceStart >= 52 && timeSinceStart <=60) {
                 spawnEnemy3(timeSinceLastSpawn); 
                 spawnKunai2(timeSinceLastSpawnKunai3);
+            }
+            if((timeSinceStart>65 && timeSinceStart<95)){
+                spawnEnemy7();
+                timeSinceLastSpawnEnemy7 += deltaTime;
+                timeSinceLastSpawnEnemy7b +=deltaTime;
+                if(timeSinceStart>83){
+                    spawnEnemy5();
+                }
+                if(timeSinceStart>83){
+                    spawnEnemy5();
+                }
             }
             if (timeSinceStart >= 100 && timeSinceStart <128) {
                 spawnEnemy4(timeSinceLastSpawn);
@@ -242,13 +273,11 @@ public class Stage1 extends AbstractStage{
                 }
 
                 if (input.isBomb() && timeLastBomb <=0 && this.player.getBomb()>0 && this.player.isAlive()) {
-                    System.out.println("oui");
-                    System.out.println(this.player.getBomb());
                     entity.add(this.player.useBomb());
                     this.player.setBomb(this.player.getBomb()-1);
                     timeLastBomb=600;
                     // Supprimer toutes les balles ennemies immédiatement pour éviter les balles fantomes
-                    entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
+                    // entity.removeIf(e -> e instanceof AbstractBullet b && "enemy".equals(b.getOwnerType()));
                 }
             }
 
@@ -322,8 +351,10 @@ public class Stage1 extends AbstractStage{
                     }
                 } else if ("enemy".equals(bullet.getOwnerType()) && timeAfterPlayerDead < 0) {
                     if (this.player != null && this.player.isAlive() && this.player.intersects(bullet)) {
-                        this.player.takeDamage(bullet.getDamage());
-                        bullet.takeDamage(1);
+                        if(timeAfterPlayerDead<=0 && timeLastBomb<=0){
+                            this.player.takeDamage(bullet.getDamage());
+                            bullet.takeDamage(1);
+                        }
                     }
                 }
             }
@@ -370,6 +401,7 @@ public class Stage1 extends AbstractStage{
             }
             boolean hasBombBullet = toRemove.stream().anyMatch(e -> e instanceof BombBullet);
             if (hasBombBullet) {
+                soundManager.playSound("explosion.wav", 0.1);
                for (Entity e : entity) {
                     if (e instanceof AbstractEnemyShooter enemy) {
                         enemy.takeDamage(250);
@@ -572,9 +604,9 @@ public class Stage1 extends AbstractStage{
 
             
             //Enemy kunai
-            EnemyKunai1 enemyKunai1a = new EnemyKunai1(600, 15);
+            EnemyKunai1 enemyKunai1a = new EnemyKunai1(700, 15);
             EnemyKunai1 enemyKunai1b = new EnemyKunai1(400, 15);
-            EnemyKunai1 enemyKunai1c = new EnemyKunai1(200, 15);
+            EnemyKunai1 enemyKunai1c = new EnemyKunai1(100, 15);
                                             
             enemies.add(enemyKunai1a);
             enemies.add(enemyKunai1b);
@@ -587,6 +619,64 @@ public class Stage1 extends AbstractStage{
             cptKunai3 -=1;
             timeSinceLastSpawnKunai3 = 0; // on remet le compteur à zéro
         }
+    }
+
+    private void spawnEnemy5(){
+        if(spawnEnemy5){
+            Enemy5Stage1 enemy5Stage1a = new Enemy5Stage1(500, 15);
+            Enemy5Stage1 enemy5Stage1b = new Enemy5Stage1(300, 15);
+
+            enemies.add(enemy5Stage1a);
+            enemies.add(enemy5Stage1b);
+
+            entity.add(enemy5Stage1a);
+            entity.add(enemy5Stage1b);
+            spawnEnemy5=false;
+        }
+    }
+
+        private void spawnEnemy6(){
+        if(spawnEnemy6){
+            Enemy6Stage1 enemy6Stage1a = new Enemy6Stage1(600, 15);
+            Enemy6Stage1 enemy6Stage1b = new Enemy6Stage1(400, 15);
+            Enemy6Stage1 enemy6Stage1c = new Enemy6Stage1(200, 15);
+
+            enemies.add(enemy6Stage1a);
+            enemies.add(enemy6Stage1b);
+            enemies.add(enemy6Stage1c);
+
+            entity.add(enemy6Stage1a);
+            entity.add(enemy6Stage1b);
+            entity.add(enemy6Stage1c);
+            spawnEnemy6=false;
+        }
+    }
+
+    private void spawnEnemy7(){
+        if(timeSinceLastSpawnEnemy7b>=6){
+            Enemy8Stage1 enemy8Stage1 = new Enemy8Stage1(400, 15);
+            enemies.add(enemy8Stage1);
+            entity.add(enemy8Stage1);
+            timeSinceLastSpawnEnemy7b=0;
+        }
+        if(timeSinceLastSpawnEnemy7>=2){
+            if(spawnEnemy7r){
+                Enemy7Stage1 enemy7Stage1c = new Enemy7Stage1(200, 15);
+                enemies.add(enemy7Stage1c);
+                entity.add(enemy7Stage1c);
+                spawnEnemy7r=false;
+                spawnEnemy7l=true;
+
+            }else if(spawnEnemy7l){
+                Enemy7Stage1 enemy7Stage1a = new Enemy7Stage1(600, 15);
+                enemies.add(enemy7Stage1a);
+                entity.add(enemy7Stage1a);
+                spawnEnemy7r=true;
+                spawnEnemy7l=false;
+
+            }
+            timeSinceLastSpawnEnemy7 = 0;
+        }   
     }
 
     private void spawnBoss(){

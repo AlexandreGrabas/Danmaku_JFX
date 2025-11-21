@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 public class SoundManager {
-
+    private AudioClip clip;
     private MediaPlayer currentMusic;
     private final HashMap<String, AudioClip> soundCache = new HashMap<>();
 
@@ -60,7 +60,7 @@ public class SoundManager {
 
     public void playSound(String fileName, double volume) {
         try {
-            AudioClip clip = soundCache.get(fileName);
+            clip = soundCache.get(fileName);
 
             // Si non préchargé → fallback mais avec latence
             if (clip == null) {
@@ -91,6 +91,13 @@ public class SoundManager {
             currentMusic.stop();
             currentMusic.dispose();
             currentMusic = null; 
+        }
+    }
+
+    public void stopSound(){
+        if (clip != null) {
+            clip.stop();
+            clip = null; 
         }
     }
 }

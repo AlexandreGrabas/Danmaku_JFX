@@ -133,8 +133,8 @@ public class Boss1 extends AbstractEnemyShooter{
                 soundManager.playSound("feuSound.wav", 0.15);
             }
             if(heart==1){
-                this.life=20000;
-                this.lifeMax=20000;
+                this.life=30000;
+                this.lifeMax=30000;
                 this.timeLastPhase=50;
                 weapons.clear();
                 wiredWeapons.clear();
