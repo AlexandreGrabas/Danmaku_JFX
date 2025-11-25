@@ -107,10 +107,19 @@ public class Player extends Entity {
 
     public void earnScore(double score){
         this.score=this.score+score;
-        if(score>nextExtraLifeScore){
-            heart+=1;
-            nextExtraLifeScore+=lifeStep;
+        if(this.score>nextExtraLifeScore){
+            this.heart+=1;
+            this.nextExtraLifeScore+=lifeStep;
         }
+    }
+
+    public void respawn(){
+        this.setHeart(3);
+        this.setBomb(3);
+        this.setAlive(true);
+        this.setScore(0);
+        this.setX(400);
+        this.setY(800);
     }
 
     public void setSprite(Image sprite){

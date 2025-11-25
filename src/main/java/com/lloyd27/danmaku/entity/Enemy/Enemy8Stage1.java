@@ -17,11 +17,11 @@ public class Enemy8Stage1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private double time=0;
-    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/tête_dragon.png"));
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/fee_mechante_reine.png"));
 
     public Enemy8Stage1(double x, double y) {
         super(x, y);
-        this.life=2000;
+        this.life=2500;
         this.height=80;
         this.width=80;
         this.setCanShoot(false);

@@ -4,6 +4,7 @@ import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.entity.weapon.SimpleWeaponBouleFeu;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponPlayer;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -30,9 +31,11 @@ public class PlayerErwin extends Player{
         this.speed=250;
         this.name="ERWIN";
 
-        weapons.add(new SimpleWeapon(0,0,0.01));
-        weapons.add(new SimpleWeapon(15,0,0.05));
-        weapons.add(new SimpleWeapon(-15,0,0.05));
+        weapons.add(new SimpleWeaponBouleFeu(0,0,0.01));
+        // weapons.add(new SimpleWeapon(15,0,0.05));
+        // weapons.add(new SimpleWeapon(-15,0,0.05));
+        weapons.add(new SimpleWeaponBouleFeu(15,0,0.05));
+        weapons.add(new SimpleWeaponBouleFeu(-15,0,0.05));
         wiredWeapons.add(new WiredWeaponPlayer());
         sprite = new Image(getClass().getResourceAsStream("/sprites/Erwin_6x6.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));

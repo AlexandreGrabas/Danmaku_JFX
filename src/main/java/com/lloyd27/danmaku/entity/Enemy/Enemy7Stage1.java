@@ -19,14 +19,15 @@ public class Enemy7Stage1 extends AbstractEnemyShooter{
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private double temporisation=0;
     private double time=0;
-    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/gobelin_mage.png"));
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/fee_mechante.png"));
 
     public Enemy7Stage1(double x, double y) {
         super(x, y);
-        this.life=50;
-        this.height=40;
-        this.width=40;
+        this.life=600;
+        this.height=60;
+        this.width=60;
         this.setCanShoot(false);
+        this.setScore(500);
         wiredWeapons.add(new WiredWeaponEnemyBig(0.25));
     }
 

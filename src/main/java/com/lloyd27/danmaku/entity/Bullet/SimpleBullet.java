@@ -16,10 +16,18 @@ public class SimpleBullet extends AbstractBullet {
     }
 
     public SimpleBullet(double x, double y, double vx, double vy,String ownerType,double height,double width) {
-        super(x, y, vx, vy, 2); // 2 de dégâts
+        super(x, y, vx, vy, 10); // 10 de dégâts
         this.ownerType = ownerType;
         this.height=height;
         this.width=width;
+    }
+
+    public SimpleBullet(double x, double y, double vx, double vy,String ownerType,double height,double width,double dmg,Image sprite) {
+        super(x, y, vx, vy, dmg); // dmg de dégâts
+        this.ownerType = ownerType;
+        this.height=height;
+        this.width=width;
+        this.sprite=sprite;
     }
 
     @Override

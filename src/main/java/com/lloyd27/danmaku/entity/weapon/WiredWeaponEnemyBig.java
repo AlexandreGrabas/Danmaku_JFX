@@ -5,6 +5,8 @@ import java.util.List;
 import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.Bullet.SimpleBullet;
 
+import javafx.scene.image.Image;
+
 import java.util.ArrayList;
 
 public class WiredWeaponEnemyBig extends AbstractWiredWeapon {
@@ -36,7 +38,7 @@ public class WiredWeaponEnemyBig extends AbstractWiredWeapon {
         double vx = dx / length * speed;
         double vy = dy / length * speed;
 
-        bullets.add(new SimpleBullet(x, y, vx, vy,"enemy",50,50));
+        bullets.add(new SimpleBullet(x, y, vx, vy,"enemy",50,50,2,new Image("/sprites/boule_feu.png")));
         return bullets;
     }
 

@@ -17,7 +17,7 @@ public class Enemy6Stage1 extends AbstractEnemyShooter{
     private List<AbstractWeapon> weapons = new ArrayList<>();
     private List<AbstractWiredWeapon> wiredWeapons = new ArrayList<>();
     private double time=0;
-    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/tête_dragon.png"));
+    private Image sprite=new Image(getClass().getResourceAsStream("/sprites/fee_mechante_reine.png"));
 
     public Enemy6Stage1(double x, double y) {
         super(x, y);

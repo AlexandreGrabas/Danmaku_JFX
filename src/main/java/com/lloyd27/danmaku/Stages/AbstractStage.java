@@ -19,13 +19,13 @@ public abstract class AbstractStage {
     public Canvas getHudCanvas() { return hudCanvas; } // peut être null si pas de HUD
 
     public void setSize(double width, double height) {
-    if (canvas != null) {
-        canvas.setWidth(width);
-        canvas.setHeight(height);
+        if (canvas != null) {
+            canvas.setWidth(width);
+            canvas.setHeight(height);
+        }
+        if (hudCanvas != null) {
+            hudCanvas.setWidth(150);
+            hudCanvas.setHeight(height);
+        }
     }
-    if (hudCanvas != null) {
-        hudCanvas.setWidth(150);
-        hudCanvas.setHeight(height);
-    }
-}
 }
