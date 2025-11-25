@@ -57,11 +57,11 @@ public class HUDRenderer {
         gc.fillText(" SCORE:", 0, 220);
         gc.fillText(" "+(int)player.getScore(), 0, 250);
         gc.fillText(" LIFE:", 0, 450);
-        for(int i=0;i < player.getHeart();i++){
-            if(i>=6){
-                gc.drawImage(coeur, i%6*23, 460+i/6*25, 40, 40);
+        for(int i=1;i < player.getHeart();i++){
+            if(i>=7){
+                gc.drawImage(coeur, (i-1)%6*23, 460+(i-1)/6*25, 40, 40);
             }else{
-                gc.drawImage(coeur, i*23, 460, 40, 40);
+                gc.drawImage(coeur, (i-1)*23, 460, 40, 40);
             }
         }
         gc.fillText(" BOMB:", 0, 600);

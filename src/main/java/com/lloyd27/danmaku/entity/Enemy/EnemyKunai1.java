@@ -23,6 +23,7 @@ public class EnemyKunai1 extends AbstractEnemyShooter{
         this.life=500;
         this.height=40;
         this.width=40;
+        this.setScore(500);
         this.setCanShoot(false);
         weapons.add(new KunaiWeapon(0.3));
     }

@@ -7,6 +7,7 @@ import com.lloyd27.danmaku.entity.Bullet.AbstractBullet;
 import com.lloyd27.danmaku.entity.Bullet.BombBullet;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.managers.SoundManager;
 import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 
@@ -29,6 +30,7 @@ public class Player extends Entity {
     protected double spriteWidth=70;
     protected double spriteHeight=70;
     protected Image sprite;
+    protected SoundManager soundManager = new SoundManager();
 
     // Animation
     protected int columns = 6;
@@ -36,6 +38,8 @@ public class Player extends Entity {
     protected int currentFrame = 0;
     protected double frameTime = 0.02; // durée d’une frame (en secondes)
     protected double timeSinceLastFrame = 0;
+    private int nextExtraLifeScore = 100000;   // score de la prochaine vie
+    private int lifeStep = 100000;    
 
     public Player(double x, double y, double heart, double bomb) {
         super(x, y);
@@ -43,12 +47,16 @@ public class Player extends Entity {
         this.life=1;
         this.bomb=bomb;
         this.score=0;
-        this.width=8;
-        this.height=8;
+        this.width=6;
+        this.height=6;
 
         // sprite = new Image(getClass().getResourceAsStream("/sprites/sprite-256px-36.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_1_detourer.png"));
         // sprite = new Image(getClass().getResourceAsStream("/sprites/player_2.png"));
+    }
+
+    public void audioPlayerDeath(){
+        soundManager.playSound("death.wav", 2);
     }
 
     public double getX(){
@@ -97,6 +105,23 @@ public class Player extends Entity {
         return this.score=score;
     }
 
+    public void earnScore(double score){
+        this.score=this.score+score;
+        if(this.score>nextExtraLifeScore){
+            this.heart+=1;
+            this.nextExtraLifeScore+=lifeStep;
+        }
+    }
+
+    public void respawn(){
+        this.setHeart(3);
+        this.setBomb(3);
+        this.setAlive(true);
+        this.setScore(0);
+        this.setX(400);
+        this.setY(800);
+    }
+
     public void setSprite(Image sprite){
         this.sprite=sprite;
     }
@@ -110,7 +135,7 @@ public class Player extends Entity {
         return allBullets;
     }
 
-        public List<AbstractBullet> shootWired(double enemyX, double enemyY) {
+    public List<AbstractBullet> shootWired(double enemyX, double enemyY) {
         List<AbstractBullet> allBullets = new ArrayList<>();
         for (AbstractWiredWeapon w : wiredWeapons) {
             allBullets.addAll(w.shoot(x, y, enemyX, enemyY));
@@ -119,7 +144,7 @@ public class Player extends Entity {
     }
 
     public AbstractBullet useBomb(){
-        return (AbstractBullet) new BombBullet(x, y - 10, 0, -300, "player");
+        return (AbstractBullet) new BombBullet(400, 890, 0, -300, "player");
     }
 
     public void slowPlayer(boolean slow) {

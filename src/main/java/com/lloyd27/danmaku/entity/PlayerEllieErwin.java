@@ -8,6 +8,7 @@ import com.lloyd27.danmaku.entity.weapon.AbstractWeapon;
 import com.lloyd27.danmaku.entity.weapon.AbstractWiredWeapon;
 import com.lloyd27.danmaku.entity.weapon.NeedleWeapon;
 import com.lloyd27.danmaku.entity.weapon.SimpleWeapon;
+import com.lloyd27.danmaku.entity.weapon.SimpleWeaponBouleFeu;
 import com.lloyd27.danmaku.entity.weapon.WiredWeaponPlayer;
 
 import javafx.scene.canvas.GraphicsContext;
@@ -32,8 +33,8 @@ public class PlayerEllieErwin extends Player{
         super(x, y, heart, bomb);
         this.life=1;
         this.score=0;
-        this.width=8;
-        this.height=8;
+        this.width=6;
+        this.height=6;
         this.speed=450;
         this.name="ELLIE&ERWIN";
         weapons.add(new SimpleWeapon(0,0,0.01));
@@ -55,8 +56,8 @@ public class PlayerEllieErwin extends Player{
             this.weapons.add(new SimpleWeapon(0,0,0.01));
             this.weapons.add(new NeedleWeapon());
             if(score>=40000){
-                this.weapons.add(new SimpleWeapon(15,0,0.05));
-                this.weapons.add(new SimpleWeapon(-15,0,0.05));
+                weapons.add(new SimpleWeaponBouleFeu(15,0,0.05));
+                weapons.add(new SimpleWeaponBouleFeu(-15,0,0.05));
             }
             if(score>=80000){
                 this.wiredWeapons.add(new WiredWeaponPlayer());
@@ -66,9 +67,9 @@ public class PlayerEllieErwin extends Player{
             this.speed=250;
             this.weapons.clear();
             this.wiredWeapons.clear();
-            this.weapons.add(new SimpleWeapon(0,0,0.01));
-            this.weapons.add(new SimpleWeapon(15,0,0.05));
-            this.weapons.add(new SimpleWeapon(-15,0,0.05));
+            this.weapons.add(new SimpleWeaponBouleFeu(0,0,0.01));
+            this.weapons.add(new SimpleWeaponBouleFeu(15,0,0.05));
+            this.weapons.add(new SimpleWeaponBouleFeu(-15,0,0.05));
             this.wiredWeapons.add(new WiredWeaponPlayer());
             if(score>=40000){
                 this.weapons.add(new NeedleWeapon(0.1));
@@ -86,8 +87,8 @@ public class PlayerEllieErwin extends Player{
             upgrade40k = true;
 
             if (ellie) {
-                weapons.add(new SimpleWeapon(15, 0, 0.05));
-                weapons.add(new SimpleWeapon(-15, 0, 0.05));
+                weapons.add(new SimpleWeaponBouleFeu(15,0,0.05));
+                weapons.add(new SimpleWeaponBouleFeu(-15,0,0.05));
             } else {
                 weapons.add(new NeedleWeapon(0.1));
             }
@@ -101,9 +102,9 @@ public class PlayerEllieErwin extends Player{
             } else {
                 this.weapons.clear();
                 this.wiredWeapons.clear();
-                this.weapons.add(new SimpleWeapon(0,0,0.01));
-                this.weapons.add(new SimpleWeapon(15,0,0.05));
-                this.weapons.add(new SimpleWeapon(-15,0,0.05));
+                this.weapons.add(new SimpleWeaponBouleFeu(0,0,0.01));
+                this.weapons.add(new SimpleWeaponBouleFeu(15,0,0.05));
+                this.weapons.add(new SimpleWeaponBouleFeu(-15,0,0.05));
                 this.wiredWeapons.add(new WiredWeaponPlayer());
                 this.weapons.add(new NeedleWeapon());
                 this.speed=300;

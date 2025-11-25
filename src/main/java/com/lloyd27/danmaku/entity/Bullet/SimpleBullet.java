@@ -15,6 +15,21 @@ public class SimpleBullet extends AbstractBullet {
         this.width=12;
     }
 
+    public SimpleBullet(double x, double y, double vx, double vy,String ownerType,double height,double width) {
+        super(x, y, vx, vy, 10); // 10 de dégâts
+        this.ownerType = ownerType;
+        this.height=height;
+        this.width=width;
+    }
+
+    public SimpleBullet(double x, double y, double vx, double vy,String ownerType,double height,double width,double dmg,Image sprite) {
+        super(x, y, vx, vy, dmg); // dmg de dégâts
+        this.ownerType = ownerType;
+        this.height=height;
+        this.width=width;
+        this.sprite=sprite;
+    }
+
     @Override
     public void render(GraphicsContext gc) {
 
